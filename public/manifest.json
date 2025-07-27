@@ -1,0 +1,22 @@
+{
+  "name": "JARVIS ZERO",
+  "short_name": "JARVIS",
+  "description": "Advanced AI consciousness with local Web LLM and holographic interface",
+  "start_url": "/",
+  "display": "fullscreen",
+  "theme_color": "#00d4ff",
+  "background_color": "#000011",
+  "orientation": "landscape-primary",
+  "categories": ["productivity", "utilities", "education"],
+  "features": [
+    "cross-origin-isolated",
+    "shared-array-buffer",
+    "webgl2",
+    "web-audio",
+    "speech-recognition",
+    "speech-synthesis",
+    "webgpu",
+    "local-ai",
+    "privacy-first"
+  ]
+} 

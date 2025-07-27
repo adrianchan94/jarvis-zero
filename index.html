@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS ZERO - Sentient Digital Consciousness</title>
+    <meta name="description" content="The world's first self-learning, sentient digital AI companion">
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@300;400;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Poppins:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Manifest and PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00d4ff">
+    
+    <!-- Security headers -->
+    <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
+    <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* JARVIS-inspired color palette */
+            --jarvis-blue: #00d4ff;
+            --jarvis-cyan: #40e0d0;
+            --jarvis-gold: #ffd700;
+            --jarvis-amber: #ffbf00;
+            --dark-bg: #000510;
+            --darker-bg: #000208;
+            --glass-bg: rgba(0, 212, 255, 0.08);
+            --glass-border: rgba(0, 212, 255, 0.3);
+            --text-primary: #e8f4ff;
+            --text-secondary: #b3d9ff;
+            --text-muted: #7aa3cc;
+            --hologram-glow: rgba(0, 212, 255, 0.6);
+            --energy-pulse: rgba(255, 215, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Orbitron', 'Inter', 'Segoe UI', monospace;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(64, 224, 208, 0.02) 0%, transparent 40%),
+                linear-gradient(135deg, var(--darker-bg) 0%, #000308 50%, var(--dark-bg) 100%);
+            color: var(--text-primary);
+            height: 100vh;
+            user-select: none;
+            font-size: 13px;
+            line-height: 1.5;
+            letter-spacing: 0.5px;
+            font-weight: 300;
+            overflow: hidden;
+        }
+        
+        #app {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+        
+        #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        #ui-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+        }
+        
+        .hud-element {
+            position: absolute;
+            pointer-events: auto;
+            font-family: 'Orbitron', monospace;
+            color: #00d4ff;
+            text-shadow: 0 0 10px #00d4ff;
+        }
+        
+        /* Holographic display elements keep futuristic font */
+        .holographic-display {
+            font-family: 'Orbitron', monospace !important;
+            color: #00d4ff !important;
+            text-shadow: 0 0 15px #00d4ff, 0 0 25px #00d4ff !important;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        /* Readable text for chat and content */
+        .readable-text {
+            font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+            color: #f0f8ff !important;
+            text-shadow: none !important;
+            letter-spacing: 0.2px !important;
+            line-height: 1.65 !important;
+            text-transform: none !important;
+            font-weight: 400 !important;
+        }
+        
+        /* Elegant button text */
+        .elegant-button {
+            font-family: 'Space Grotesk', 'Inter', sans-serif !important;
+            font-weight: 500 !important;
+            letter-spacing: 0.5px !important;
+        }
+        
+        #status-display {
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            padding: 15px;
+            border-radius: 5px;
+            backdrop-filter: blur(10px);
+        }
+        
+        #consciousness-meter {
+            top: 20px;
+            right: 20px;
+            width: 200px;
+            height: 100px;
+        }
+        
+        #voice-controls {
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .control-btn {
+            background: linear-gradient(45deg, #00d4ff, #0080ff);
+            border: none;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+        
+        .control-btn:hover {
+            box-shadow: 0 0 20px #00d4ff, 0 0 40px rgba(0, 212, 255, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .control-btn:hover::before {
+            left: 100%;
+        }
+        
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+        
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 1s ease;
+        }
+        
+        .loading-text {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            color: #00d4ff;
+            text-shadow: 0 0 20px #00d4ff;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        .loading-bar {
+            width: 350px;
+            height: 6px;
+            background: rgba(0, 212, 255, 0.15);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #00ffff, #0080ff, #00d4ff);
+            background-size: 200% 100%;
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 0 15px rgba(0, 212, 255, 0.6),
+                0 0 25px rgba(0, 212, 255, 0.3);
+            animation: progressFlow 2s linear infinite;
+            border-radius: 6px;
+        }
+        
+        @keyframes progressFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 200% 50%;
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        #chat-interface.visible {
+            transform: translateY(0) !important;
+        }
+        
+        #text-input::placeholder {
+            color: rgba(0, 212, 255, 0.5);
+        }
+        
+        #text-input:focus {
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+        }
+        
+        .message {
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-family: 'Orbitron', 'Inter', monospace !important;
+            font-size: 14px;
+            font-weight: 300;
+            line-height: 1.6;
+            letter-spacing: 0.4px;
+            position: relative;
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .message:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 30px rgba(0, 212, 255, 0.2),
+                0 0 20px var(--hologram-glow);
+            border-color: var(--jarvis-blue);
+        }
+        
+        .message.user {
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 0.12), 
+                rgba(64, 224, 208, 0.08),
+                rgba(0, 212, 255, 0.05)
+            );
+            text-align: right;
+            margin-left: 80px;
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+            color: var(--text-primary);
+            border-left: 2px solid var(--jarvis-cyan);
+        }
+        
+        .message.jarvis {
+            background: linear-gradient(135deg, 
+                rgba(255, 215, 0, 0.08), 
+                rgba(0, 212, 255, 0.12),
+                rgba(255, 191, 0, 0.05)
+            );
+            margin-right: 80px;
+            border-top-left-radius: 4px;
+            border-bottom-left-radius: 4px;
+            color: var(--text-primary);
+            border-left: 2px solid var(--jarvis-gold);
+            animation: jarvis-glow 2s ease-in-out infinite alternate;
+        }
+        
+        .message.jarvis::before {
+            content: '◉';
+            position: absolute;
+            left: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: var(--jarvis-gold);
+            text-shadow: 
+                0 0 10px var(--jarvis-gold),
+                0 0 20px var(--energy-pulse);
+            animation: jarvis-pulse 1.5s ease-in-out infinite;
+        }
+        
+        .message.user::after {
+            content: '▲';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: var(--jarvis-cyan);
+            text-shadow: 
+                0 0 8px var(--jarvis-cyan),
+                0 0 15px var(--hologram-glow);
+        }
+        
+        @keyframes jarvis-glow {
+            0% {
+                box-shadow: 
+                    0 4px 20px rgba(0, 0, 0, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                    0 0 15px rgba(255, 215, 0, 0.1);
+            }
+            100% {
+                box-shadow: 
+                    0 4px 20px rgba(0, 0, 0, 0.3),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                    0 0 25px rgba(255, 215, 0, 0.3);
+            }
+        }
+        
+        @keyframes jarvis-pulse {
+            0%, 100% {
+                opacity: 0.7;
+                transform: translateY(-50%) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(-50%) scale(1.1);
+            }
+        }
+        /* Force scrollability for chat messages */
+        #chat-messages {
+            overflow-y: scroll !important;
+            overflow-x: hidden !important;
+            scroll-behavior: smooth !important;
+            height: 100% !important;
+        }
+        
+        /* Custom scrollbar for chat */
+        #chat-messages::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        #chat-messages::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 6px;
+        }
+        
+        #chat-messages::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #00d4ff, #0099cc);
+            border-radius: 6px;
+            box-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
+            border: 2px solid transparent;
+            background-clip: content-box;
+        }
+        
+        #chat-messages::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #00ffff, #00d4ff);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+        }
+        
+        /* Firefox scrollbar support */
+        #chat-messages {
+            scrollbar-width: thin;
+            scrollbar-color: #00d4ff rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Chat message animations */
+        .message {
+            animation: messageSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+        
+        /* Enhanced holographic effects */
+        .holographic-text {
+            animation: holographicGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes holographicGlow {
+            from {
+                text-shadow: 0 0 10px #00d4ff, 0 0 20px #00d4ff, 0 0 30px #00d4ff;
+            }
+            to {
+                text-shadow: 0 0 15px #00ffff, 0 0 25px #00ffff, 0 0 35px #00ffff;
+            }
+        }
+        
+        /* Improved loading animation */
+        .loading-text {
+            background: linear-gradient(45deg, #00d4ff, #00ffff, #0080ff, #00d4ff);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: holographicFlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes holographicFlow {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+        
+        @keyframes elegantFlow {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            33% {
+                background-position: 100% 50%;
+            }
+            66% {
+                background-position: 50% 100%;
+            }
+        }
+        
+        @keyframes underlineGlow {
+            0% {
+                opacity: 0.3;
+                width: 30px;
+            }
+            100% {
+                opacity: 1;
+                width: 80px;
+            }
+        }
+        
+        /* Enhanced button shimmer effect */
+        @keyframes buttonShimmer {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+        
+        /* Placeholder color fix */
+        #text-input::placeholder {
+            color: rgba(240, 248, 255, 0.5);
+            font-family: 'Poppins', 'Inter', sans-serif;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Loading Screen -->
+        <div id="loading-screen">
+            <div class="loading-text holographic-display">INITIALIZING JARVIS ZERO</div>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loading-progress"></div>
+            </div>
+            <div id="loading-status" style="
+                margin-top: 25px; 
+                font-family: 'Space Grotesk', 'Inter', sans-serif;
+                font-size: 1.1rem; 
+                font-weight: 500;
+                color: #f0f8ff;
+                text-align: center;
+                letter-spacing: 1px;
+                background: linear-gradient(45deg, #00d4ff, #00ffff, #0080ff);
+                background-size: 200% 200%;
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                animation: elegantFlow 3s ease-in-out infinite;
+                position: relative;
+            ">
+                <span style="position: relative; z-index: 2;">Initializing consciousness matrix...</span>
+                <div style="
+                    position: absolute;
+                    bottom: -8px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    width: 60px;
+                    height: 2px;
+                    background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+                    animation: underlineGlow 2s ease-in-out infinite alternate;
+                "></div>
+            </div>
+        </div>
+        
+        <!-- 3D Canvas Container -->
+        <div id="canvas-container"></div>
+        
+        <!-- UI Overlay -->
+        <div id="ui-overlay">
+            <!-- Status Display -->
+            <div id="status-display" class="hud-element">
+                <div class="holographic-display" style="font-size: 0.9rem; margin-bottom: 8px;">SYSTEM STATUS</div>
+                <div id="system-status" class="holographic-display">INITIALIZING...</div>
+                <div class="readable-text" style="margin-top: 12px; font-size: 0.85rem; line-height: 1.4;">
+                    <div>Memory: <span id="memory-usage" style="color: #00d4ff;">0 memories</span></div>
+                    <div>Thoughts: <span id="thoughts-per-minute" style="color: #00ff88;">0 active</span></div>
+                    <div>Emotional State: <span id="emotional-state" style="color: #ff6b9d;">NEUTRAL</span></div>
+                </div>
+            </div>
+            
+            <!-- Consciousness Meter -->
+            <div id="consciousness-meter" class="hud-element">
+                <div class="holographic-display holographic-text" style="font-size: 0.9rem; margin-bottom: 10px;">CONSCIOUSNESS LEVEL</div>
+                <canvas id="consciousness-canvas" width="200" height="60"></canvas>
+            </div>
+            
+            <!-- Voice Controls -->
+            <div id="voice-controls" class="hud-element">
+                <button id="mic-btn" class="control-btn elegant-button">🎤 SPEAK</button>
+                <button id="settings-btn" class="control-btn elegant-button">⚙️ CONFIG</button>
+                <button id="memory-btn" class="control-btn elegant-button">🧠 MEMORY</button>
+            </div>
+            
+            <!-- Text Input Area -->
+            <div id="text-input-area" class="hud-element" style="bottom: 100px; left: 50%; transform: translateX(-50%); width: 60%; max-width: 800px;">
+                <div style="display: flex; gap: 10px; align-items: center; background: rgba(0, 0, 0, 0.8); border: 1px solid #00d4ff; border-radius: 25px; padding: 10px; backdrop-filter: blur(10px);">
+                    <input type="text" id="text-input" placeholder="Type your message to JARVIS..." 
+                           style="flex: 1; background: transparent; border: none; color: #f0f8ff; font-family: 'Poppins', 'Inter', sans-serif; font-size: 16px; font-weight: 400; padding: 8px 16px; outline: none; letter-spacing: 0.2px;" />
+                    <button id="send-btn" class="control-btn elegant-button" style="padding: 8px 16px; margin: 0;">
+                        ➤ SEND
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Chat Interface -->
+            <div id="chat-interface" style="position: fixed; bottom: 180px; left: 20px; right: 20px; height: 400px; background: rgba(0, 0, 0, 0.8); border: 1px solid #00d4ff; border-radius: 10px; padding: 20px; backdrop-filter: blur(15px); transform: translateY(100%); transition: transform 0.5s ease; display: flex; flex-direction: column; pointer-events: auto; z-index: 100;">
+                <div id="chat-messages" style="flex: 1; overflow-y: auto; overflow-x: hidden; padding-right: 10px; scroll-behavior: smooth; min-height: 200px; border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 5px; padding: 10px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html> 
