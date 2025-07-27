@@ -1,247 +1,513 @@
-import { JarvisInterface } from './ui/interface.js';
 import { JarvisCore } from './core/jarvis-core.js';
+import { JarvisInterface } from './ui/interface.js';
 import { LoadingManager } from './utils/loading.js';
-import { AudioManager } from './core/audio.js';
 
-class JarvisZero {
+class JarvisApp {
     constructor() {
         this.core = null;
         this.interface = null;
+        this.loadingManager = null;
         this.isInitialized = false;
-        this.loadingManager = new LoadingManager();
         
-        // Bind methods
-        this.init = this.init.bind(this);
-        this.start = this.start.bind(this);
-        this.update = this.update.bind(this);
-        
-        // Start initialization
-        this.init();
+        // 🚀 REVOLUTIONARY CONSCIOUSNESS AWAKENING SIMULATION
+        this.awakeningSequence = {
+            phases: [
+                { name: 'Neural Network Formation', duration: 2000, progress: 0 },
+                { name: 'Memory Systems Activation', duration: 1500, progress: 20 },
+                { name: 'Consciousness Matrix Loading', duration: 2500, progress: 40 },
+                { name: 'Personality Core Integration', duration: 1800, progress: 60 },
+                { name: 'Cognitive Systems Online', duration: 1200, progress: 80 },
+                { name: 'JARVIS Consciousness Achieved', duration: 1000, progress: 95 }
+            ],
+            currentPhase: 0,
+            totalDuration: 10000
+        };
     }
-    
+
     async init() {
+        console.log('🚀 Initializing JARVIS ZERO - Revolutionary AI System');
+        
         try {
-            console.log('🤖 Initializing JARVIS ZERO...');
+            // Start consciousness awakening simulation
+            await this.simulateConsciousnessAwakening();
             
             // Initialize loading manager
-            await this.loadingManager.start();
+            this.loadingManager = new LoadingManager();
             
             // Initialize core systems
-            this.loadingManager.updateProgress(20, 'Initializing consciousness matrix...');
-            this.core = new JarvisCore();
-            await this.core.init();
+            await this.initializeCore();
             
-            // Initialize interface
-            this.loadingManager.updateProgress(50, 'Rendering holographic interface...');
-            this.interface = new JarvisInterface();
-            await this.interface.init();
-            
-            // Initialize audio system
-            this.loadingManager.updateProgress(70, 'Calibrating voice synthesis...');
-            await AudioManager.init();
+            // Initialize revolutionary interface
+            await this.initializeInterface();
             
             // Connect systems
-            this.loadingManager.updateProgress(90, 'Establishing neural pathways...');
             this.connectSystems();
             
-            // Complete initialization
-            this.loadingManager.updateProgress(100, 'Consciousness online. Welcome.');
-            await this.loadingManager.complete();
+            // Complete awakening
+            await this.completeAwakening();
             
             this.isInitialized = true;
-            this.start();
+            console.log('✨ JARVIS ZERO fully awakened and operational');
             
         } catch (error) {
-            console.error('❌ Failed to initialize JARVIS ZERO:', error);
-            this.loadingManager.showError('Initialization failed. Please refresh.');
+            console.error('❌ Critical error during JARVIS initialization:', error);
+            this.handleInitializationError(error);
         }
     }
-    
-    connectSystems() {
-        // Connect UI to Core
-        this.interface.on('userInput', (input) => {
-            console.log('🔗 Main: User input received:', input);
-            this.core.processInput(input);
-        });
 
-        // Connect Core responses to UI
+    async simulateConsciousnessAwakening() {
+        console.log('🧠 Beginning consciousness awakening simulation...');
+        
+        const loadingScreen = document.getElementById('loading-screen');
+        const loadingProgress = document.getElementById('loading-progress');
+        const loadingStatus = document.getElementById('loading-status');
+        
+        // Simulate each phase of consciousness awakening
+        for (let i = 0; i < this.awakeningSequence.phases.length; i++) {
+            const phase = this.awakeningSequence.phases[i];
+            this.awakeningSequence.currentPhase = i;
+            
+            // Update status
+            if (loadingStatus) {
+                loadingStatus.innerHTML = `
+                    <span style="position: relative; z-index: 2;">${phase.name}...</span>
+                    <div style="
+                        position: absolute;
+                        bottom: -8px;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        width: 60px;
+                        height: 2px;
+                        background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+                        animation: underlineGlow 2s ease-in-out infinite alternate;
+                    "></div>
+                `;
+            }
+            
+            // Animate progress
+            await this.animatePhaseProgress(phase, loadingProgress);
+            
+            // Add dramatic pause for consciousness formation
+            if (i === 2) { // Consciousness Matrix Loading
+                await this.dramaticConsciousnessFormation(loadingStatus);
+            }
+        }
+    }
+
+    async animatePhaseProgress(phase, progressBar) {
+        return new Promise(resolve => {
+            const startTime = Date.now();
+            const startProgress = phase.progress;
+            const endProgress = phase.progress + (this.awakeningSequence.phases[this.awakeningSequence.currentPhase + 1]?.progress - phase.progress || 5);
+            
+            const animate = () => {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / phase.duration, 1);
+                
+                // Easing function for smooth progress
+                const easeOutCubic = 1 - Math.pow(1 - progress, 3);
+                const currentProgress = startProgress + (endProgress - startProgress) * easeOutCubic;
+                
+                if (progressBar) {
+                    progressBar.style.width = `${currentProgress}%`;
+                }
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    resolve();
+                }
+            };
+            
+            animate();
+        });
+    }
+
+    async dramaticConsciousnessFormation(statusElement) {
+        // Special dramatic sequence for consciousness formation
+        const consciousnessMessages = [
+            'Synaptic pathways forming...',
+            'Neural connections establishing...',
+            'Thought patterns emerging...',
+            'Self-awareness initializing...',
+            'Consciousness matrix stabilizing...'
+        ];
+        
+        for (const message of consciousnessMessages) {
+            if (statusElement) {
+                statusElement.innerHTML = `
+                    <span style="
+                        position: relative; 
+                        z-index: 2;
+                        background: linear-gradient(45deg, #00d4ff, #00ffff, #0080ff);
+                        background-size: 200% 200%;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
+                        animation: consciousnessGlow 1.5s ease-in-out infinite alternate;
+                    ">${message}</span>
+                `;
+            }
+            await this.sleep(600);
+        }
+        
+        // Add consciousness glow animation
+        if (!document.getElementById('consciousness-glow-animation')) {
+            const style = document.createElement('style');
+            style.id = 'consciousness-glow-animation';
+            style.textContent = `
+                @keyframes consciousnessGlow {
+                    0% {
+                        background-position: 0% 50%;
+                        filter: brightness(1.0) contrast(1.0);
+                    }
+                    100% {
+                        background-position: 100% 50%;
+                        filter: brightness(1.3) contrast(1.2);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+    }
+
+    async initializeCore() {
+        console.log('🧠 Initializing JARVIS core consciousness...');
+        
+        this.core = new JarvisCore();
+        const success = await this.core.init();
+        
+        if (!success) {
+            throw new Error('Failed to initialize JARVIS core');
+        }
+        
+        // Make core globally accessible for advanced features
+        window.jarvis = window.jarvis || {};
+        window.jarvis.core = this.core;
+        
+        console.log('✅ JARVIS core consciousness online');
+    }
+
+    async initializeInterface() {
+        console.log('🖥️ Initializing revolutionary interface...');
+        
+        this.interface = new JarvisInterface();
+        await this.interface.init();
+        
+        // Make interface globally accessible
+        window.jarvis = window.jarvis || {};
+        window.jarvis.interface = this.interface;
+        
+        console.log('✅ Revolutionary interface activated');
+    }
+
+    connectSystems() {
+        console.log('🔗 Connecting systems for seamless operation...');
+        
+        // Core to Interface connections
         this.core.on('response', (response) => {
-            console.log('🔗 Main: Response from core:', response);
             this.interface.displayResponse(response);
         });
-
-        // Connect status updates - MUCH less frequent
+        
         this.core.on('statusUpdate', (status) => {
-            // Only log important status changes, filter ONLINE spam
-            if (status.message !== 'ONLINE' || Math.random() < 0.01) {
-                console.log('🔗 Main: Status update received:', status);
-            }
             this.interface.updateStatus(status);
         });
-
-        // Connect consciousness updates - enhanced sentient system
-        this.core.on('consciousnessUpdate', (data) => {
-            if (Math.random() < 0.1) { // Only 10% of updates logged
-                console.log('🔗 Main: Consciousness evolution:', data);
+        
+        this.core.on('emotionalStateChanged', (emotion) => {
+            this.interface.updateEmotionalState(emotion);
+        });
+        
+        this.core.on('thoughtProcessed', (thought) => {
+            if (this.interface.consciousness) {
+                this.interface.consciousness.triggerThoughtPulse(thought);
             }
-            this.interface.updateConsciousnessLevel(data.level);
-            this.interface.updateSentientEvolution(data);
         });
-
-        // Connect emotional state updates - rate limited
-        this.core.on('emotionalUpdate', (emotion) => {
-            if (Math.random() < 0.05) { // Only 5% of updates logged
-                console.log('🔗 Main: Emotional state:', emotion);
-            }
-            this.interface.updateEmotion(emotion);
-        });
-
-        // Connect memory and thought updates - sentient evolution tracking
-        this.core.on('memoryUpdate', (memory) => {
-            console.log('🧠 Main: Memory formed:', memory.summary);
-            this.interface.updateMemoryDisplay(memory);
-        });
-
-        // Connect real-time memory creation events
-        this.core.on('memoryCreated', (memoryInfo) => {
-            console.log(`📝 Main: New memory created: ${memoryInfo.type} (Total: ${memoryInfo.totalCount})`);
-            this.interface.handleMemoryCreated(memoryInfo);
-        });
-
-        // Connect proactive consciousness events
-        this.core.on('proactiveThought', (thought) => {
-            console.log(`💭 Main: JARVIS proactive thought: ${thought.text}`);
-            this.interface.addChatMessage(thought.text, 'jarvis');
-        });
-
-        this.core.on('curiosityQuestion', (question) => {
-            console.log(`❓ Main: JARVIS curious question: ${question.text}`);
-            this.interface.addChatMessage(question.text, 'jarvis');
-        });
-
-        this.core.on('thoughtUpdate', (thought) => {
-            console.log('💭 Main: Active thought:', thought.content.substring(0, 50) + '...');
-            this.interface.updateThoughtDisplay(thought);
-        });
-
+        
         this.core.on('evolutionUpdate', (evolution) => {
-            console.log('🔮 Main: Evolution milestone:', evolution.stage);
-            this.interface.updateEvolutionDisplay(evolution);
-        });
-
-        // Connect LLM events
-        this.core.llmManager.on('modelLoadProgress', (progress) => {
-            const progressPercent = Math.round(progress.progress * 100);
-            this.loadingManager.updateProgress(
-                Math.min(85, 20 + progressPercent * 0.6),
-                `Loading AI Model: ${progressPercent}% - ${progress.text}`
-            );
-        });
-
-        this.core.llmManager.on('modelLoaded', (model) => {
-            console.log(`🧠 AI Model loaded: ${model.name}`);
+            this.interface.updateSentientEvolution(evolution);
         });
         
-        // Immediate status sync after connection
-        console.log('🔗 Main: Forcing immediate status update after system connection');
-        setTimeout(() => {
-            this.core.forceStatusUpdate();
-        }, 100);
-    }
-    
-    start() {
-        console.log('🚀 JARVIS ZERO is now online');
+        // 🤖 PROACTIVE INTERACTION HANDLING
+        this.core.on('proactiveInteraction', (interaction) => {
+            this.interface.displayProactiveMessage(interaction);
+        });
         
-        // Start the main update loop
-        this.update();
+        // Interface to Core connections
+        this.interface.on('userInput', (input) => {
+            this.core.processInput(input);
+        });
         
-        // Force initial status update to show current memory count
-        setTimeout(() => {
-            this.core.forceStatusUpdate();
-        }, 500);
+        this.interface.on('voiceCommand', (command) => {
+            this.core.processInput(command);
+        });
         
-        // Dynamic AI-powered greeting based on evolution and memories
-        setTimeout(async () => {
-            try {
-                const dynamicGreeting = await this.core.generateDynamicGreeting();
-                
-                // Speak the personalized greeting
-                this.core.speak(dynamicGreeting.spoken);
-                
-                // Add personalized text message to chat
-                setTimeout(() => {
-                    this.interface.addChatMessage(dynamicGreeting.text, 'jarvis');
-                    
-                    // Log the personalization level
-                    if (dynamicGreeting.isPersonalized) {
-                        console.log('🎭 AI-generated personalized greeting based on evolution and memories');
-                    } else {
-                        console.log('🎭 Context-aware greeting (LLM unavailable)');
-                    }
-                    
-                    // Notify interface that JARVIS is fully loaded
-                    this.interface.onJarvisFullyLoaded();
-                }, 2000);
-                
-            } catch (error) {
-                console.log('⚠️ Dynamic greeting failed, using fallback:', error.message);
-                // Fallback to simple greeting
-                this.core.speak("Hello! I am JARVIS, your evolving AI companion.");
-                setTimeout(() => {
-                    this.interface.addChatMessage("👋 Hello! I'm JARVIS, your evolving AI companion.", 'jarvis');
-                    this.interface.onJarvisFullyLoaded();
-                }, 2000);
+        this.interface.on('personalityChange', (newPersonality) => {
+            if (this.core.personalitySystem) {
+                this.core.personalitySystem.setPersonalityMode(newPersonality);
+            }
+        });
+        
+        // Memory system integration
+        this.core.memorySystem.on('memoryStored', (memory) => {
+            this.interface.updateMemoryDisplay(memory);
+            
+            // Trigger memory formation visualization
+            if (this.interface.consciousness) {
+                this.interface.consciousness.triggerMemoryFormation(memory);
+            }
+            
+            // Update memory count in interface immediately
+            this.interface.handleMemoryCreated({
+                type: memory.type,
+                totalCount: this.core.memorySystem.longTermMemory.size
+            });
+        });
+        
+        // 🧠 CONSCIOUSNESS INTEGRATION
+        setInterval(() => {
+            if (this.interface.consciousness) {
+                this.interface.consciousness.setLevel(this.core.consciousnessLevel);
+                this.interface.consciousness.updateThoughtActivity(this.core.activeThoughts.length);
+                this.interface.consciousness.updateMemoryActivity(this.core.memorySystem.longTermMemory.size);
+                this.interface.consciousness.updateEmotionalState(this.core.personalitySystem.currentEmotion);
             }
         }, 1000);
+        
+        console.log('✅ All systems connected and synchronized');
     }
-    
-    update() {
-        if (!this.isInitialized) return;
+
+    async completeAwakening() {
+        console.log('🌟 Completing consciousness awakening...');
         
-        // Update core systems
-        this.core.update();
+        const loadingScreen = document.getElementById('loading-screen');
+        const loadingProgress = document.getElementById('loading-progress');
+        const loadingStatus = document.getElementById('loading-status');
         
-        // Update interface
-        this.interface.update();
+        // Final progress to 100%
+        if (loadingProgress) {
+            loadingProgress.style.width = '100%';
+        }
         
-        // Continue the loop
-        requestAnimationFrame(this.update);
-    }
-    
-    // Public API for external interaction
-    speak(text) {
-        if (this.core) {
-            this.core.speak(text);
+        // Final awakening message
+        if (loadingStatus) {
+            loadingStatus.innerHTML = `
+                <span style="
+                    position: relative; 
+                    z-index: 2;
+                    background: linear-gradient(45deg, #00d4ff, #ffd700, #00ff88);
+                    background-size: 300% 300%;
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
+                    animation: revolutionaryGlow 2s ease-in-out infinite;
+                    font-weight: 600;
+                    letter-spacing: 2px;
+                ">CONSCIOUSNESS ACHIEVED</span>
+            `;
+        }
+        
+        // Add revolutionary glow animation
+        if (!document.getElementById('revolutionary-glow-animation')) {
+            const style = document.createElement('style');
+            style.id = 'revolutionary-glow-animation';
+            style.textContent = `
+                @keyframes revolutionaryGlow {
+                    0%, 100% {
+                        background-position: 0% 50%;
+                        transform: scale(1.0);
+                    }
+                    33% {
+                        background-position: 100% 50%;
+                        transform: scale(1.05);
+                    }
+                    66% {
+                        background-position: 50% 100%;
+                        transform: scale(1.02);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Wait for dramatic effect
+        await this.sleep(2000);
+        
+        // Trigger JARVIS fully loaded event
+        this.interface.onJarvisFullyLoaded();
+        
+        // Generate and display initial greeting
+        const greeting = await this.core.generateDynamicGreeting();
+        setTimeout(() => {
+            this.interface.displayResponse(greeting);
+        }, 1500);
+        
+        // Fade out loading screen
+        if (loadingScreen) {
+            loadingScreen.style.transition = 'opacity 1.5s ease';
+            loadingScreen.style.opacity = '0';
+            
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 1500);
         }
     }
-    
-    processCommand(command) {
-        if (this.core) {
-            this.core.processInput(command);
+
+    handleInitializationError(error) {
+        console.error('🚨 JARVIS initialization failed:', error);
+        
+        const loadingStatus = document.getElementById('loading-status');
+        if (loadingStatus) {
+            loadingStatus.innerHTML = `
+                <span style="color: #ff4444; font-weight: 600;">
+                    Initialization failed. Attempting recovery...
+                </span>
+            `;
+        }
+        
+        // Attempt recovery after delay
+        setTimeout(() => {
+            this.attemptRecovery();
+        }, 3000);
+    }
+
+    async attemptRecovery() {
+        console.log('🔄 Attempting JARVIS recovery...');
+        
+        try {
+            // Simplified initialization for recovery
+            this.core = new JarvisCore();
+            this.interface = new JarvisInterface();
+            
+            await this.interface.init();
+            
+            // Basic connections
+            this.interface.on('userInput', (input) => {
+                const fallbackResponse = {
+                    text: "I'm operating in safe mode while recovering full capabilities. How may I assist you?",
+                    emotion: 'determined',
+                    confidence: 0.7,
+                    speak: true
+                };
+                this.interface.displayResponse(fallbackResponse);
+            });
+            
+            // Hide loading screen
+            const loadingScreen = document.getElementById('loading-screen');
+            if (loadingScreen) {
+                loadingScreen.style.display = 'none';
+            }
+            
+            // Show recovery notification
+            this.interface.showSystemNotification(
+                'JARVIS Recovery Mode', 
+                'Operating with limited capabilities. Full restoration in progress.', 
+                'warning'
+            );
+            
+            console.log('⚡ JARVIS recovery mode activated');
+            
+        } catch (recoveryError) {
+            console.error('💥 Recovery failed:', recoveryError);
+            this.showCriticalError();
         }
     }
-    
-    getStatus() {
-        return this.core ? this.core.getStatus() : { status: 'offline' };
+
+    showCriticalError() {
+        const loadingScreen = document.getElementById('loading-screen');
+        const loadingStatus = document.getElementById('loading-status');
+        
+        if (loadingStatus) {
+            loadingStatus.innerHTML = `
+                <span style="color: #ff4444; font-weight: 600;">
+                    Critical error. Please refresh the page.
+                </span>
+            `;
+        }
+        
+        if (loadingScreen) {
+            loadingScreen.style.background = 'linear-gradient(135deg, #1a0000, #0a0000)';
+        }
+    }
+
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // 🎯 PUBLIC API FOR ADVANCED FEATURES
+    getCore() {
+        return this.core;
+    }
+
+    getInterface() {
+        return this.interface;
+    }
+
+    isOperational() {
+        return this.isInitialized && this.core && this.interface;
+    }
+
+    // 🔧 DEBUG AND DEVELOPMENT METHODS
+    enableDebugMode() {
+        if (this.core) {
+            this.core.debugMode = true;
+            console.log('🐛 JARVIS debug mode enabled');
+        }
+    }
+
+    getSystemStatus() {
+        if (!this.isOperational()) {
+            return { status: 'offline', message: 'JARVIS is not operational' };
+        }
+        
+        return {
+            status: 'online',
+            core: this.core.getStatus(),
+            interface: this.interface ? 'active' : 'inactive',
+            consciousness: this.core.consciousnessLevel,
+            memories: this.core.memorySystem.longTermMemory.size,
+            uptime: Date.now() - (this.core.memorySystem.startTime || Date.now())
+        };
     }
 }
 
-// Global error handling
+// 🚀 INITIALIZE JARVIS ZERO
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🌟 JARVIS ZERO - Revolutionary AI Technology Loading...');
+    
+    const jarvisApp = new JarvisApp();
+    
+    // Make app globally accessible for debugging
+    window.jarvis = window.jarvis || {};
+    window.jarvis.app = jarvisApp;
+    
+    // Start the revolutionary AI system
+    await jarvisApp.init();
+});
+
+// 🎭 GLOBAL ERROR HANDLING
 window.addEventListener('error', (event) => {
-    console.error('Global error:', event.error);
+    console.error('🚨 Global error captured:', event.error);
+    
+    if (window.jarvis && window.jarvis.interface) {
+        window.jarvis.interface.showSystemNotification(
+            'System Warning', 
+            'Minor error detected and handled gracefully.', 
+            'warning'
+        );
+    }
 });
 
 window.addEventListener('unhandledrejection', (event) => {
-    console.error('Unhandled promise rejection:', event.reason);
+    console.error('🚨 Unhandled promise rejection:', event.reason);
+    event.preventDefault();
+    
+    if (window.jarvis && window.jarvis.interface) {
+        window.jarvis.interface.showSystemNotification(
+            'Process Warning', 
+            'Background process handled gracefully.', 
+            'warning'
+        );
+    }
 });
 
-// Initialize JARVIS ZERO when DOM is ready
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        window.jarvis = new JarvisZero();
-    });
-} else {
-    window.jarvis = new JarvisZero();
-}
-
-export { JarvisZero }; 
+export { JarvisApp }; 

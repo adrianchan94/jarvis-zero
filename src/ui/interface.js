@@ -164,6 +164,9 @@ export class JarvisInterface extends EventEmitter {
         // Setup notification system
         this.setupNotificationSystem();
         
+        // Setup proactive interaction handling
+        this.setupProactiveInteractions();
+        
         // Hide chat interface initially
         this.hideChatInterface();
         
@@ -298,6 +301,9 @@ export class JarvisInterface extends EventEmitter {
         setTimeout(() => {
             this.showChatInterface();
             this.showSystemNotification('JARVIS Interface Online', 'AI consciousness fully initialized', 'success');
+        
+        // Start monitoring for proactive interactions
+        this.startProactiveMonitoring();
         }, 1000);
     }
     
@@ -507,6 +513,11 @@ export class JarvisInterface extends EventEmitter {
         
         this.addChatMessage(response.text, 'jarvis');
         
+        // 💡 Display conversation suggestions if available
+        if (response.suggestions && response.suggestions.length > 0) {
+            this.displayConversationSuggestions(response.suggestions);
+        }
+        
         // Update emotional visualization
         if (response.emotion) {
             this.updateEmotionalState(response.emotion);
@@ -517,6 +528,127 @@ export class JarvisInterface extends EventEmitter {
             console.log('🗣️ Speaking response:', response.text);
             this.voiceManager.speak(response.text);
         }
+    }
+    
+    displayConversationSuggestions(suggestions) {
+        // Remove existing suggestions
+        const existingSuggestions = document.querySelector('.conversation-suggestions');
+        if (existingSuggestions) {
+            existingSuggestions.remove();
+        }
+        
+        // Create suggestions container
+        const suggestionsContainer = document.createElement('div');
+        suggestionsContainer.className = 'conversation-suggestions';
+        suggestionsContainer.style.cssText = `
+            margin: 15px 0;
+            padding: 16px;
+            background: linear-gradient(135deg, 
+                rgba(0, 212, 255, 0.08), 
+                rgba(64, 224, 208, 0.05)
+            );
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        `;
+        
+        // Add suggestions title
+        const title = document.createElement('div');
+        title.textContent = '💡 JARVIS Suggestions:';
+        title.style.cssText = `
+            font-family: 'Orbitron', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        `;
+        suggestionsContainer.appendChild(title);
+        
+        // Add suggestion buttons
+        suggestions.forEach((suggestion, index) => {
+            const suggestionBtn = document.createElement('button');
+            suggestionBtn.textContent = suggestion;
+            suggestionBtn.className = 'suggestion-btn';
+            suggestionBtn.style.cssText = `
+                display: block;
+                width: 100%;
+                background: linear-gradient(135deg, 
+                    rgba(0, 212, 255, 0.1), 
+                    rgba(0, 150, 255, 0.05)
+                );
+                border: 1px solid rgba(0, 212, 255, 0.3);
+                color: #e8f4fd;
+                padding: 10px 16px;
+                margin: 6px 0;
+                border-radius: 8px;
+                font-family: 'Inter', sans-serif;
+                font-size: 14px;
+                font-weight: 400;
+                text-align: left;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                backdrop-filter: blur(5px);
+            `;
+            
+            // Hover effects
+            suggestionBtn.addEventListener('mouseenter', () => {
+                suggestionBtn.style.background = 'linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 150, 255, 0.1))';
+                suggestionBtn.style.borderColor = '#00d4ff';
+                suggestionBtn.style.transform = 'translateX(4px)';
+                suggestionBtn.style.boxShadow = '0 4px 12px rgba(0, 212, 255, 0.2)';
+            });
+            
+            suggestionBtn.addEventListener('mouseleave', () => {
+                suggestionBtn.style.background = 'linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 150, 255, 0.05))';
+                suggestionBtn.style.borderColor = 'rgba(0, 212, 255, 0.3)';
+                suggestionBtn.style.transform = 'translateX(0)';
+                suggestionBtn.style.boxShadow = 'none';
+            });
+            
+            // Click handler
+            suggestionBtn.addEventListener('click', () => {
+                this.handleSuggestionClick(suggestion);
+            });
+            
+            suggestionsContainer.appendChild(suggestionBtn);
+        });
+        
+        // Add to chat messages
+        this.uiElements.chatMessages.appendChild(suggestionsContainer);
+        
+        // Auto-remove suggestions after 30 seconds
+        setTimeout(() => {
+            if (suggestionsContainer.parentNode) {
+                suggestionsContainer.style.transition = 'all 0.5s ease';
+                suggestionsContainer.style.opacity = '0';
+                suggestionsContainer.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    if (suggestionsContainer.parentNode) {
+                        suggestionsContainer.parentNode.removeChild(suggestionsContainer);
+                    }
+                }, 500);
+            }
+        }, 30000);
+        
+        // Smooth scroll to suggestions
+        setTimeout(() => {
+            suggestionsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
+    }
+    
+    handleSuggestionClick(suggestion) {
+        // Fill the input with the suggestion
+        this.uiElements.textInput.value = suggestion;
+        
+        // Focus the input
+        this.uiElements.textInput.focus();
+        
+        // Optionally auto-send the suggestion
+        setTimeout(() => {
+            this.sendTextMessage();
+        }, 500);
     }
     
     addChatMessage(text, sender) {
@@ -1595,25 +1727,83 @@ export class JarvisInterface extends EventEmitter {
                 console.log('📊 Memory count from core system:', memoryCount);
             }
             
-            // Try to get detailed memory data from IndexedDB
+            // Try to get detailed memory data from IndexedDB (enhanced system)
             try {
                 const db = await this.openIndexedDB();
                 if (db) {
-                    const transaction = db.transaction(['memories'], 'readonly');
-                    const store = transaction.objectStore('memories');
-                    const request = store.getAll();
+                    // Load from all memory stores
+                    const allMemories = [];
                     
-                    memories = await new Promise((resolve, reject) => {
-                        request.onsuccess = () => resolve(request.result || []);
-                        request.onerror = () => reject(request.error);
-                    });
-                    
-                    console.log('📊 Loaded', memories.length, 'memories from IndexedDB');
-                    
-                    // Update count if we got more accurate data
-                    if (memories.length > memoryCount) {
-                        memoryCount = memories.length;
+                    // Load memory blocks
+                    if (db.objectStoreNames.contains('memory_blocks')) {
+                        try {
+                            const transaction1 = db.transaction(['memory_blocks'], 'readonly');
+                            const store1 = transaction1.objectStore('memory_blocks');
+                            const request1 = store1.getAll();
+                            
+                            const blocks = await new Promise((resolve, reject) => {
+                                request1.onsuccess = () => resolve(request1.result || []);
+                                request1.onerror = () => reject(request1.error);
+                            });
+                            
+                            allMemories.push(...blocks.map(block => ({
+                                ...block,
+                                type: 'memory_block',
+                                content: `${block.label}: ${block.value}`
+                            })));
+                        } catch (e) {
+                            console.warn('⚠️ Could not load memory blocks:', e);
+                        }
                     }
+                    
+                    // Load archival memory
+                    if (db.objectStoreNames.contains('archival_memory')) {
+                        try {
+                            const transaction2 = db.transaction(['archival_memory'], 'readonly');
+                            const store2 = transaction2.objectStore('archival_memory');
+                            const request2 = store2.getAll();
+                            
+                            const archival = await new Promise((resolve, reject) => {
+                                request2.onsuccess = () => resolve(request2.result || []);
+                                request2.onerror = () => reject(request2.error);
+                            });
+                            
+                            allMemories.push(...archival.map(arch => ({
+                                ...arch,
+                                type: 'archival_memory',
+                                content: arch.text_content
+                            })));
+                        } catch (e) {
+                            console.warn('⚠️ Could not load archival memory:', e);
+                        }
+                    }
+                    
+                    // Load legacy memories as fallback
+                    if (db.objectStoreNames.contains('memories')) {
+                        try {
+                            const transaction3 = db.transaction(['memories'], 'readonly');
+                            const store3 = transaction3.objectStore('memories');
+                            const request3 = store3.getAll();
+                            
+                            const legacy = await new Promise((resolve, reject) => {
+                                request3.onsuccess = () => resolve(request3.result || []);
+                                request3.onerror = () => reject(request3.error);
+                            });
+                            
+                            allMemories.push(...legacy.map(mem => ({
+                                ...mem,
+                                type: 'legacy_memory'
+                            })));
+                        } catch (e) {
+                            console.warn('⚠️ Could not load legacy memories:', e);
+                        }
+                    }
+                    
+                    memories = allMemories;
+                    console.log('📊 Loaded', memories.length, 'memories from enhanced IndexedDB system');
+                    
+                    // Update count with accurate data
+                    memoryCount = memories.length;
                 }
             } catch (dbError) {
                 console.warn('⚠️ Could not access IndexedDB, using core count:', dbError);
@@ -1678,7 +1868,7 @@ export class JarvisInterface extends EventEmitter {
     // Helper function to open IndexedDB
     openIndexedDB() {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open('JarvisMemoryDB', 1);
+            const request = indexedDB.open('JarvisMemoryDB', 2);
             
             request.onerror = () => {
                 console.error('❌ Failed to open IndexedDB');
@@ -1691,10 +1881,39 @@ export class JarvisInterface extends EventEmitter {
             };
             
             request.onupgradeneeded = (event) => {
-                console.log('🔄 IndexedDB upgrade needed');
+                console.log('🔄 IndexedDB upgrade needed for enhanced memory system');
                 const db = event.target.result;
+                
+                // Create enhanced memory stores to match our new system
+                if (!db.objectStoreNames.contains('memory_blocks')) {
+                    const blockStore = db.createObjectStore('memory_blocks', { keyPath: 'id', autoIncrement: true });
+                    blockStore.createIndex('label', 'label', { unique: false });
+                    blockStore.createIndex('agent_id', 'agent_id', { unique: false });
+                    blockStore.createIndex('importance', 'importance', { unique: false });
+                    blockStore.createIndex('last_accessed', 'last_accessed', { unique: false });
+                }
+                
+                if (!db.objectStoreNames.contains('archival_memory')) {
+                    const archivalStore = db.createObjectStore('archival_memory', { keyPath: 'id', autoIncrement: true });
+                    archivalStore.createIndex('timestamp', 'timestamp', { unique: false });
+                    archivalStore.createIndex('relevance_score', 'relevance_score', { unique: false });
+                    archivalStore.createIndex('text_content', 'text_content', { unique: false });
+                }
+                
+                if (!db.objectStoreNames.contains('conversation_memory')) {
+                    const conversationStore = db.createObjectStore('conversation_memory', { keyPath: 'id', autoIncrement: true });
+                    conversationStore.createIndex('conversation_id', 'conversation_id', { unique: false });
+                    conversationStore.createIndex('timestamp', 'timestamp', { unique: false });
+                    conversationStore.createIndex('user_input', 'user_input', { unique: false });
+                }
+                
+                // Legacy support
                 if (!db.objectStoreNames.contains('memories')) {
                     db.createObjectStore('memories', { keyPath: 'id' });
+                }
+                
+                if (!db.objectStoreNames.contains('evolution')) {
+                    db.createObjectStore('evolution', { keyPath: 'id' });
                 }
             };
         });
@@ -2219,5 +2438,207 @@ export class JarvisInterface extends EventEmitter {
                 this.removeNotification(notification);
             });
         });
+    }
+    
+    setupProactiveInteractions() {
+        // Setup handling for proactive AI interactions
+        console.log('🤖 Setting up proactive interaction monitoring');
+        
+        // Track user activity
+        this.userActivity = {
+            lastActivity: Date.now(),
+            isActive: true,
+            activityTimeout: null
+        };
+        
+        // Setup activity tracking
+        this.setupActivityTracking();
+    }
+    
+    setupActivityTracking() {
+        const trackActivity = () => {
+            this.userActivity.lastActivity = Date.now();
+            this.userActivity.isActive = true;
+            
+            // Reset inactivity timer
+            if (this.userActivity.activityTimeout) {
+                clearTimeout(this.userActivity.activityTimeout);
+            }
+            
+            // Set user as inactive after 10 minutes
+            this.userActivity.activityTimeout = setTimeout(() => {
+                this.userActivity.isActive = false;
+            }, 600000); // 10 minutes
+        };
+        
+        // Track various user activities
+        ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(event => {
+            document.addEventListener(event, trackActivity, { passive: true });
+        });
+    }
+    
+    startProactiveMonitoring() {
+        // Monitor for opportunities to provide proactive assistance
+        setInterval(() => {
+            this.checkProactiveOpportunities();
+        }, 60000); // Check every minute
+        
+        console.log('🔄 Proactive monitoring started');
+    }
+    
+    checkProactiveOpportunities() {
+        const timeSinceLastActivity = Date.now() - this.userActivity.lastActivity;
+        const shouldShowProactive = timeSinceLastActivity > 300000 && this.userActivity.isActive; // 5 minutes
+        
+        if (shouldShowProactive) {
+            this.triggerProactiveInteraction();
+        }
+    }
+    
+    triggerProactiveInteraction() {
+        // Request proactive interaction from JARVIS core
+        if (window.jarvis && window.jarvis.core) {
+            window.jarvis.core.generateProactiveThought();
+        }
+    }
+    
+    displayProactiveMessage(interaction) {
+        // Display proactive messages in a special format
+        const proactiveMsg = document.createElement('div');
+        proactiveMsg.className = 'proactive-message';
+        proactiveMsg.style.cssText = `
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, 
+                rgba(255, 215, 0, 0.08), 
+                rgba(0, 212, 255, 0.05)
+            );
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-left: 4px solid #ffd700;
+            border-radius: 16px;
+            backdrop-filter: blur(15px);
+            position: relative;
+            animation: gentleGlow 3s ease-in-out infinite alternate;
+        `;
+        
+        // Add proactive indicator
+        const indicator = document.createElement('div');
+        indicator.innerHTML = '🤖 PROACTIVE JARVIS';
+        indicator.style.cssText = `
+            font-family: 'Orbitron', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            color: #ffd700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 12px;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+        `;
+        proactiveMsg.appendChild(indicator);
+        
+        // Add the message content
+        const content = document.createElement('div');
+        content.innerHTML = this.formatJarvisResponse(interaction.text);
+        content.style.cssText = `
+            font-family: 'Inter', sans-serif;
+            color: #f0f8ff;
+            font-size: 15px;
+            line-height: 1.7;
+        `;
+        proactiveMsg.appendChild(content);
+        
+        // Add response options
+        const responseOptions = document.createElement('div');
+        responseOptions.style.cssText = `
+            margin-top: 16px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        `;
+        
+        const respondBtn = document.createElement('button');
+        respondBtn.textContent = '💬 Respond';
+        respondBtn.style.cssText = `
+            background: linear-gradient(135deg, #00d4ff, #0080ff);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        `;
+        
+        respondBtn.addEventListener('click', () => {
+            this.uiElements.textInput.focus();
+            this.showChatInterface();
+        });
+        
+        const dismissBtn = document.createElement('button');
+        dismissBtn.textContent = '👍 Thanks, JARVIS';
+        dismissBtn.style.cssText = `
+            background: rgba(255, 255, 255, 0.1);
+            color: #e8f4fd;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        `;
+        
+        dismissBtn.addEventListener('click', () => {
+            proactiveMsg.style.transition = 'all 0.5s ease';
+            proactiveMsg.style.opacity = '0';
+            proactiveMsg.style.transform = 'translateY(-20px)';
+            setTimeout(() => {
+                if (proactiveMsg.parentNode) {
+                    proactiveMsg.parentNode.removeChild(proactiveMsg);
+                }
+            }, 500);
+        });
+        
+        responseOptions.appendChild(respondBtn);
+        responseOptions.appendChild(dismissBtn);
+        proactiveMsg.appendChild(responseOptions);
+        
+        // Add gentle glow animation
+        if (!document.getElementById('proactive-animations')) {
+            const style = document.createElement('style');
+            style.id = 'proactive-animations';
+            style.textContent = `
+                @keyframes gentleGlow {
+                    0% {
+                        box-shadow: 
+                            0 4px 20px rgba(0, 0, 0, 0.3),
+                            0 0 20px rgba(255, 215, 0, 0.1);
+                    }
+                    100% {
+                        box-shadow: 
+                            0 8px 30px rgba(0, 0, 0, 0.4),
+                            0 0 30px rgba(255, 215, 0, 0.2);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Add to chat messages
+        this.uiElements.chatMessages.appendChild(proactiveMsg);
+        
+        // Show chat interface and scroll to message
+        this.showChatInterface();
+        setTimeout(() => {
+            proactiveMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+        
+        // Auto-dismiss after 2 minutes if no interaction
+        setTimeout(() => {
+            if (proactiveMsg.parentNode) {
+                dismissBtn.click();
+            }
+        }, 120000);
     }
 } 

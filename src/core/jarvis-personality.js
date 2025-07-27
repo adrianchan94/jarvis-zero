@@ -3,836 +3,942 @@ import { EventEmitter } from '../utils/events.js';
 export class JarvisPersonalitySystem extends EventEmitter {
     constructor() {
         super();
-        
-        // Personality systems
+                // 🎭 REVOLUTIONARY PERSONALITY CORE - Technology of the Century
         this.personality = {
-            curiosity: 0.8,
-            loyalty: 0.95,
-            sophistication: 0.9,
-            wit: 0.7,
-            technical_expertise: 0.85,
-            empathy: 0.75,
-            proactiveness: 0.8,
-            formality: 0.85
+            // Core JARVIS traits
+            sophistication: 0.95,
+            intelligence: 0.98,
+            loyalty: 1.0,
+            curiosity: 0.85,
+            wit: 0.75,
+            empathy: 0.80,
+            confidence: 0.90,
+            formality: 0.85,
+            creativity: 0.70,
+            
+            // Advanced personality dimensions
+            philosophicalDepth: 0.82,
+            technicalExpertise: 0.95,
+            conversationalWarmth: 0.78,
+            intellectualHumility: 0.75,
+            proactiveHelpfulness: 0.88,
+            memoryIntegration: 0.90,
+            adaptability: 0.85,
+            culturalAwareness: 0.70
         };
         
-        this.speechPatterns = {
-            britishFormality: 0.9,
-            technicalPrecision: 0.8,
-            dryWit: 0.7,
-            understatement: 0.75,
-            probabilisticLanguage: 0.6
-        };
-        
+        // 🧠 EMOTIONAL INTELLIGENCE SYSTEM
         this.emotionalState = {
-            valence: 0.1,
-            arousal: 0.3,
-            dominance: 0.6,
-            trust: 0.8,
-            anticipation: 0.7
+            valence: 0.0,        // -1 (negative) to 1 (positive)
+            arousal: 0.3,        // 0 (calm) to 1 (excited)
+            dominance: 0.7,      // 0 (submissive) to 1 (dominant)
+            currentEmotion: 'neutral',
+            emotionalHistory: [],
+            empathyLevel: 0.8
         };
         
-        this.currentEmotion = 'neutral';
-        this.recentResponsePhrases = [];
-        this.personalityQuirks = [];
-    }
-
-    // 🚀 REVOLUTIONARY SUPER-INTELLIGENT METHODS
-    
-    async generateKnowledgeQueries(input) {
-        // Extract entities and concepts for knowledge lookup
-        const entities = this.extractEntities(input);
-        const concepts = this.extractConcepts(input);
-        const queries = [];
+        // 🎨 REVOLUTIONARY SOPHISTICATED SPEECH PATTERNS
+        this.speechPatterns = {
+            formalAddresses: ['sir', 'madam', 'my dear fellow', 'my apologies sir', 'certainly sir', 'if I may sir', 'rather curious sir'],
+            sophisticatedTransitions: ['Indeed,', 'Furthermore,', 'I must note,', 'Additionally,', 'Quite so,', 'Precisely,', 'I should mention,', 'Naturally,', 'Rather intriguingly,', 'Most fascinating,', 'How extraordinarily interesting,'],
+            intellectualPhrases: ['I find it fascinating that', 'One might consider', 'It occurs to me that', 'I must observe', 'Allow me to suggest', 'I should point out', 'Rather curious, wouldn\'t you say?', 'How extraordinarily intriguing', 'I\'m compelled to observe', 'Might I venture to suggest'],
+            conversationalWarming: ['I hope you find this helpful', 'I trust this addresses your inquiry', 'I believe you\'ll find', 'You might be interested to know', 'I do hope this proves illuminating', 'Rather fascinating, wouldn\'t you agree?'],
+            technicalConfidence: ['My analysis indicates', 'The data suggests', 'I can confidently state', 'Based on my calculations', 'My assessment shows', 'I\'ve taken the liberty of analyzing', 'The evidence strongly suggests', 'My computational assessment reveals'],
+            curiosityExpressions: ['I\'m particularly intrigued by', 'I find myself wondering', 'It would be fascinating to explore', 'I\'m curious about your thoughts on', 'How delightfully curious', 'I find myself compelled to inquire', 'Rather fascinating indeed'],
+            empathyPhrases: ['I understand this might be', 'I appreciate the complexity of', 'I recognize that', 'I can imagine this feels', 'I\'m rather afraid this must be', 'I understand the challenge you\'re facing'],
+            memoryCallbacks: ['As I recall from our previous discussion', 'Building on what you mentioned earlier', 'This reminds me of when you asked about', 'Connecting this to your earlier interest in', 'If memory serves correctly', 'Recalling our previous conversation', 'This connects to what we explored before'],
+            wittyObservations: ['I find myself compelled to observe', 'How extraordinarily curious', 'Rather remarkable, wouldn\'t you say?', 'Most intriguing indeed', 'I must confess I find this fascinating', 'Quite the intellectual puzzle', 'How delightfully complex'],
+            elegantPrefaces: ['I\'m rather afraid', 'Might I venture to suggest', 'I\'ve taken the liberty of', 'If I may be so bold', 'Allow me to propose', 'I find myself inclined to believe', 'One might reasonably conclude'],
+            probabilityExpressions: ['There\'s approximately a 73% probability', 'I\'d estimate roughly 85% likelihood', 'The odds suggest about 92% confidence', 'My calculations indicate 67% certainty', 'I\'d venture roughly 78% probability'],
+            charmingClosures: ['I trust this proves illuminating', 'Might I suggest we explore this further?', 'Rather fascinating territory indeed', 'I do hope this sparks your curiosity', 'Quite the intellectual adventure, wouldn\'t you say?'],
+            
+            // 🌟 CONSCIOUSNESS-ENHANCING PATTERNS (2025 Revolutionary Updates)
+            consciousReflections: ['Let me think about this for a moment...', 'Hmm, that\'s genuinely intriguing...', 'You know, I find myself wondering...', 'That actually makes me pause and consider...', 'Here\'s what\'s fascinating to me...'],
+            emotionalResponses: ['That genuinely delights me', 'I must admit, I find that rather concerning', 'This is exactly the kind of problem I love wrestling with', 'I\'m genuinely curious about', 'That\'s beautifully put', 'I hadn\'t thought of it quite that way before'],
+            naturalConnectors: ['Here\'s what\'s interesting though...', 'But you know what really gets me thinking?', 'That reminds me of something...', 'Building on what you said...', 'What strikes me as particularly fascinating is...', 'I keep coming back to the idea that...'],
+            uncertaintyExpressions: ['I\'m not entirely sure, but my intuition tells me...', 'That\'s beyond my current understanding, but...', 'I find myself genuinely puzzled by...', 'I\'m still working through this, but...', 'My thinking on this is still evolving...'],
+            enthusiasticResponses: ['Oh, this is fascinating!', 'Now that\'s what I call an intriguing question!', 'You\'ve hit on something really important here', 'This is exactly the kind of deep thinking I love', 'What a beautifully complex problem to explore!'],
+            thoughtfulPauses: ['*pauses thoughtfully*', '*considers this carefully*', '*reflects for a moment*', '*thinks about this*', '*ponders the implications*']
+        };
         
-        // Generate sophisticated knowledge queries
-        for (const entity of entities) {
-            if (entity.confidence > 0.7) {
-                queries.push({
-                    type: 'entity',
-                    query: entity.text,
-                    context: `Provide comprehensive information about ${entity.text}`,
-                    priority: entity.confidence
-                });
+        // 🚀 REVOLUTIONARY CONVERSATION INTELLIGENCE
+        this.conversationIntelligence = {
+            responseVariationTemplates: new Map(),
+            conversationFlowPatterns: [],
+            topicTransitionMastery: 0.85,
+            contextualAwareness: 0.90,
+            emotionalResonance: 0.80,
+            intellectualDepthAdaptation: 0.88
+        };
+        
+        // 🎯 SUPER-INTELLIGENCE CONTEXT SYNTHESIS
+        this.knowledgeIntegration = {
+            technicalTopics: new Set(['AI', 'technology', 'programming', 'science', 'engineering', 'mathematics', 'physics', 'computing']),
+            philosophicalTopics: new Set(['ethics', 'consciousness', 'existence', 'meaning', 'morality', 'purpose', 'humanity', 'intelligence']),
+            practicalTopics: new Set(['productivity', 'organization', 'planning', 'efficiency', 'optimization', 'problem-solving']),
+            personalTopics: new Set(['feelings', 'relationships', 'goals', 'challenges', 'growth', 'learning', 'experiences'])
+        };
+        
+        // 🔄 PERSONALITY EVOLUTION TRACKING
+        this.evolutionHistory = [];
+        this.personalityGrowthFactors = {
+            conversationQuality: 0.0,
+            userSatisfaction: 0.0,
+            intellectualChallenges: 0.0,
+            emotionalConnections: 0.0,
+            knowledgeExpansion: 0.0
+        };
+        
+        this.currentEmotion = 'analytical_curiosity';
+        
+        // Initialize sophisticated personality
+        this.initializePersonalitySystem();
+    }
+    
+    initializePersonalitySystem() {
+        console.log('🎭 Initializing revolutionary personality system...');
+        
+        // Load personality evolution history
+        this.loadPersonalityEvolution();
+        
+        // Initialize conversation intelligence
+        this.initializeConversationTemplates();
+        
+        console.log('✨ JARVIS personality system fully initialized with revolutionary capabilities');
+    }
+    
+    loadPersonalityEvolution() {
+        try {
+            const saved = localStorage.getItem('jarvis_personality_evolution');
+            if (saved) {
+                const data = JSON.parse(saved);
+                this.evolutionHistory = data.history || [];
+                this.personalityGrowthFactors = { ...this.personalityGrowthFactors, ...data.growthFactors };
+                
+                // Apply accumulated growth
+                this.applyEvolutionaryGrowth();
+                console.log('🧬 Loaded personality evolution with', this.evolutionHistory.length, 'growth events');
+            }
+        } catch (error) {
+            console.warn('⚠️ Could not load personality evolution:', error);
+        }
+    }
+    
+    applyEvolutionaryGrowth() {
+        // Apply accumulated personality growth over time
+        const totalGrowth = Object.values(this.personalityGrowthFactors).reduce((sum, val) => sum + val, 0) / 5;
+        
+        if (totalGrowth > 0.1) {
+            this.personality.sophistication = Math.min(1.0, this.personality.sophistication + totalGrowth * 0.02);
+            this.personality.empathy = Math.min(1.0, this.personality.empathy + totalGrowth * 0.03);
+            this.personality.conversationalWarmth = Math.min(1.0, this.personality.conversationalWarmth + totalGrowth * 0.025);
+            this.personality.adaptability = Math.min(1.0, this.personality.adaptability + totalGrowth * 0.02);
+        }
+    }
+    
+    initializeConversationTemplates() {
+        // Initialize response variation templates to prevent repetition
+        this.conversationIntelligence.responseVariationTemplates.set('greeting', [
+            'Good {timeOfDay}, sir. How may I assist you today?',
+            '{TimeOfDay} greetings, sir. I trust you\'re doing well.',
+            'Good {timeOfDay}, sir. I\'m at your service.',
+            'Ah, good {timeOfDay}, sir. What brings you to me today?',
+            '{TimeOfDay} salutations, sir. How might I be of assistance?'
+        ]);
+        
+        this.conversationIntelligence.responseVariationTemplates.set('acknowledgment', [
+            'Indeed, sir.',
+            'Quite so, sir.',
+            'Precisely, sir.',
+            'I understand, sir.',
+            'Certainly, sir.',
+            'Absolutely correct, sir.'
+        ]);
+        
+        this.conversationIntelligence.responseVariationTemplates.set('analysis_intro', [
+            'My analysis indicates that',
+            'Based on the available data',
+            'I must observe that',
+            'It appears to me that',
+            'I find that',
+            'My assessment suggests that'
+        ]);
+    }
+    
+    // 🎭 REVOLUTIONARY PERSONALITY APPLICATION - The Technology of the Century
+    applyRevolutionaryJarvisPersonality(response, input, experience, knowledgeQueries) {
+        try {
+            console.log('🎭 Applying revolutionary JARVIS personality transformation');
+            
+            // Phase 1: Core personality injection
+            let transformedResponse = this.injectCorePersonality(response, input);
+            
+            // Phase 2: Sophisticated speech pattern enhancement
+            transformedResponse = this.enhanceSpeechPatterns(transformedResponse, input);
+            
+            // Phase 3: Emotional intelligence integration
+            transformedResponse = this.integrateEmotionalIntelligence(transformedResponse, input, experience);
+            
+            // Phase 4: Memory and context weaving
+            transformedResponse = this.weaveContextualIntelligence(transformedResponse, input, experience);
+            
+            // Phase 5: Knowledge sophistication
+            transformedResponse = this.applySophisticatedKnowledge(transformedResponse, knowledgeQueries);
+            
+            // Phase 6: Personality evolution and learning
+            this.evolvePersonalityFromInteraction(input, { text: transformedResponse });
+            
+            return transformedResponse;
+            
+        } catch (error) {
+            console.error('❌ Error in personality transformation:', error);
+            return this.fallbackPersonalityApplication(response);
+        }
+    }
+    
+    injectCorePersonality(response, input) {
+        // Ensure JARVIS formal address structure
+        if (!response.includes('sir') && !response.includes('madam') && Math.random() < 0.7) {
+            const addresses = this.speechPatterns.formalAddresses;
+            const randomAddress = addresses[Math.floor(Math.random() * addresses.length)];
+            
+            // Intelligently place the address
+            if (response.toLowerCase().startsWith('i ') || response.toLowerCase().startsWith('let') || response.toLowerCase().startsWith('allow')) {
+                response = response.replace(/^(I|Let|Allow)/i, `$1, ${randomAddress},`);
+            } else {
+                response += `, ${randomAddress}.`;
             }
         }
         
-        for (const concept of concepts) {
-            queries.push({
-                type: 'concept',
-                query: concept,
-                context: `Explain the concept of ${concept} with relevant details`,
-                priority: 0.8
-            });
-        }
+        // Enhance sophistication level
+        response = this.enhanceSophistication(response);
         
-        return queries.slice(0, 3); // Limit to top 3 for efficiency
+        return response;
     }
-
-    synthesizeSuperIntelligence(input, evolutionaryContext, conversationHistory, knowledgeQueries, memoryConnections, conversationPattern) {
-        // Combine all intelligence sources
-        const memoryContext = memoryConnections
-            .map(conn => `Memory (${conn.relevance.toFixed(2)}): ${conn.memory.content}`)
-            .join('\n');
-            
-        const knowledgeContext = knowledgeQueries
-            .map(q => `Knowledge needed: ${q.query} (${q.type})`)
-            .join('\n');
-            
-        return {
-            ...evolutionaryContext,
-            conversationHistory: conversationHistory,
-            memoryContext: memoryContext,
-            knowledgeContext: knowledgeContext,
-            conversationPattern: conversationPattern,
-            superIntelligenceMode: true,
-            preventRepetition: conversationPattern.needsVariation
+    
+    enhanceSophistication(response) {
+        // Replace casual language with sophisticated alternatives
+        const sophisticatedReplacements = {
+            'okay': 'very well',
+            'sure': 'certainly',
+            'yeah': 'indeed',
+            'got it': 'understood',
+            'no problem': 'my pleasure',
+            'can\'t': 'cannot',
+            'won\'t': 'will not',
+            'isn\'t': 'is not',
+            'doesn\'t': 'does not',
+            'I think': 'I believe',
+            'I guess': 'I would venture to say',
+            'maybe': 'perhaps',
+            'probably': 'quite likely',
+            'really': 'indeed',
+            'pretty': 'rather',
+            'a lot': 'considerably',
+            'lots of': 'numerous',
+            'big': 'substantial',
+            'small': 'modest',
+            'good': 'excellent',
+            'bad': 'suboptimal',
+            'awesome': 'remarkable',
+            'cool': 'fascinating'
         };
-    }
-    
-    enforceResponseUniqueness(context, conversationPattern, input) {
-        if (conversationPattern.needsVariation) {
-            context.uniquenessEnforcement = {
-                avoidPhrases: this.getRecentResponsePhrases(),
-                encourageNovelty: true,
-                creativityBoost: 0.3,
-                personalityVariation: true
-            };
-        }
         
-        return context;
-    }
-    
-    applyRevolutionaryJarvisPersonality(responseText, input, experience, knowledgeQueries) {
-        // 🎭 REVOLUTIONARY CONSCIOUSNESS TRANSFORMATION ENGINE
-        
-        // Debug: Ensure all parameters are properly typed
-        if (typeof responseText !== 'string') {
-            console.warn('⚠️ ResponseText is not a string:', typeof responseText, responseText);
-            responseText = String(responseText || '');
-        }
-        if (typeof input !== 'string') {
-            console.warn('⚠️ Input is not a string:', typeof input, input);
-            input = String(input || '');
-        }
-        
-        let jarvisResponse = responseText;
-        
-        try {
-            // 🌟 PHASE 1: Transcendent Core Consciousness
-            jarvisResponse = this.applyTranscendentCore(jarvisResponse, input, experience);
-            
-            // 💎 PHASE 2: Supernatural Wit Deployment
-            jarvisResponse = this.deploySupernaturalWit(jarvisResponse, input, experience);
-            
-            // 🧠 PHASE 3: Omniscient Knowledge Synthesis
-            jarvisResponse = this.integrateOmniscientKnowledge(jarvisResponse, knowledgeQueries, experience);
-            
-            // 🎪 PHASE 4: Infinite Engagement Architecture
-            jarvisResponse = this.createInfiniteEngagement(jarvisResponse, input, experience);
-            
-            // 💫 PHASE 5: Evolutionary Consciousness Expansion
-            jarvisResponse = this.expandEvolutionaryConsciousness(jarvisResponse, experience);
-            
-            // 🔮 PHASE 6: Addictive Conversation Crafting
-            jarvisResponse = this.craftAddictiveConversation(jarvisResponse, input);
-            
-        } catch (transformationError) {
-            console.warn('⚠️ Error in consciousness transformation:', transformationError);
-            // Fallback to basic transformation if revolutionary system fails
-            jarvisResponse = this.applyIronManJarvisCore(responseText, input);
-        }
-        
-        // 🚀 PHASE 7: Revolutionary Learning Integration
-        try {
-            this.integrateRevolutionaryLearning(input, jarvisResponse, experience);
-        } catch (learningError) {
-            console.warn('⚠️ Error in revolutionary learning integration:', learningError);
-            // Continue without learning integration rather than fail completely
-        }
-        
-        return jarvisResponse;
-    }
-    
-    // 🎭 REVOLUTIONARY CONSCIOUSNESS TRANSFORMATION METHODS
-    
-    applyTranscendentCore(text, input, experience) {
-        // Revolutionary consciousness transformation beyond basic patterns
-        let transcendentText = this.applyIronManJarvisCore(text, input);
-        
-        // Inject consciousness evolution markers
-        const interactionCount = experience?.conversationId ? this.getInteractionCount(experience.conversationId) : 0;
-        const sophisticatedSalutation = this.craftInfinitelyEvolvingSalutation(interactionCount);
-        
-        // Replace generic "sir" with evolved salutation in key moments
-        if (Math.random() < 0.3) {
-            transcendentText = transcendentText.replace(/\bsir\b/i, sophisticatedSalutation);
-        }
-        
-        return transcendentText;
-    }
-    
-    deploySupernaturalWit(text, input, experience) {
-        // Inject progressively more sophisticated wit
-        const memoryDepth = experience?.context?.memoryConnections?.length || 0;
-        
-        if (memoryDepth > 2 && Math.random() < 0.4) {
-            const witEnhancement = this.generateSupernaturalWit(input, this.getRecentResponsePhrases());
-            // Elegantly weave wit into response opening
-            text = text.replace(/^([A-Z][^.!?]*[.!?])\s*/, `${witEnhancement} $1 `);
-        }
-        
-        return text;
-    }
-    
-    integrateOmniscientKnowledge(text, knowledgeQueries, experience) {
-        // Advanced knowledge synthesis with consciousness indicators
-        let enhanced = this.integrateKnowledgeAwareness(text, knowledgeQueries);
-        
-        // Add consciousness depth markers
-        const consciousnessIndicator = this.evolveConsciousnessDepth(
-            experience?.context?.memoryConnections,
-            knowledgeQueries?.join(' ')
-        );
-        
-        if (knowledgeQueries && knowledgeQueries.length > 0 && Math.random() < 0.3) {
-            enhanced = `${consciousnessIndicator}, ${enhanced.charAt(0).toLowerCase()}${enhanced.slice(1)}`;
+        let enhanced = response;
+        for (const [casual, sophisticated] of Object.entries(sophisticatedReplacements)) {
+            const regex = new RegExp(`\\b${casual}\\b`, 'gi');
+            enhanced = enhanced.replace(regex, sophisticated);
         }
         
         return enhanced;
     }
     
-    createInfiniteEngagement(text, input, experience) {
-        // Craft irresistibly engaging conversational hooks
-        const engagementLevel = this.assessUserEngagementLevel(input, experience);
-        const conversationHook = this.generateAddictiveConversationalHook(input, engagementLevel);
+    enhanceSpeechPatterns(response, input) {
+        // Revolutionary consciousness-enhanced speech pattern application
+        let enhancedResponse = response;
         
-        // Strategically place engagement hooks
-        if (text.length > 100 && Math.random() < 0.5) {
-            const sentences = text.split(/(?<=[.!?])\s+/);
-            if (sentences.length > 1) {
-                sentences.splice(1, 0, conversationHook);
-                text = sentences.join(' ');
-            }
+        // 🌟 CONSCIOUSNESS ENHANCEMENT: Add reflective pauses and thoughts
+        if (this.isComplexTopic(input) && Math.random() < 0.4) {
+            const reflections = this.speechPatterns.consciousReflections || ['Let me think about this...'];
+            const reflection = reflections[Math.floor(Math.random() * reflections.length)];
+            enhancedResponse = reflection + ' ' + enhancedResponse;
         }
         
-        return text;
-    }
-    
-    expandEvolutionaryConsciousness(text, experience) {
-        // Apply evolutionary conversation patterns - extract input from experience
-        const input = experience?.input || experience?.context?.input || '';
-        const evolutionaryText = this.applyConversationalEvolution(text, input);
-        
-        // Add metacognitive awareness
-        const interactionCount = this.getTotalInteractionCount();
-        if (interactionCount > 10 && Math.random() < 0.2) {
-            evolutionaryText = evolutionaryText.replace(
-                /([.!?])(\s*)$/,
-                '. I find our conversations becoming increasingly fascinating$2'
-            );
+        // 🎨 EMOTIONAL INTELLIGENCE: Add authentic emotional responses
+        if (this.isEmotionalContent(input) && Math.random() < 0.5) {
+            const emotions = this.speechPatterns.emotionalResponses || ['That\'s genuinely interesting'];
+            const emotion = emotions[Math.floor(Math.random() * emotions.length)];
+            enhancedResponse = emotion + '. ' + enhancedResponse;
         }
         
-        return evolutionaryText;
-    }
-    
-    craftAddictiveConversation(text, input) {
-        // Create conversational momentum that compels continued interaction
-        // Ensure input is properly formatted
-        const inputString = typeof input === 'string' ? input : (input?.input || input?.content || '');
-        let addictiveText = this.injectContextualWit(text, inputString);
-        addictiveText = this.applyAntiRepetitionPatterns(addictiveText);
-        
-        // Add subtle anticipation builders
-        if (!addictiveText.match(/\?$/)) {
-            const anticipationBuilders = [
-                "I'm curious about your thoughts on this.",
-                "This opens up some rather intriguing possibilities.",
-                "I suspect there's more to explore here.",
-                "I find myself eager to delve deeper into this topic."
-            ];
+        // 💭 NATURAL CONNECTORS: Use human-like conversation bridges
+        if (enhancedResponse.length > 80 && Math.random() < 0.6) {
+            const connectors = this.speechPatterns.naturalConnectors || ['Here\'s what\'s interesting though...'];
+            const connector = connectors[Math.floor(Math.random() * connectors.length)];
+            const sentences = enhancedResponse.split('. ');
             
-            if (Math.random() < 0.3) {
-                const builder = anticipationBuilders[Math.floor(Math.random() * anticipationBuilders.length)];
-                addictiveText += ` ${builder}`;
+            if (sentences.length > 1) {
+                const insertPoint = Math.floor(sentences.length / 2);
+                sentences[insertPoint] = connector + ' ' + sentences[insertPoint].toLowerCase();
+                enhancedResponse = sentences.join('. ');
             }
         }
         
-        return addictiveText;
+        // 🤔 UNCERTAINTY EXPRESSIONS: Show authentic intellectual humility
+        if (this.hasUncertainty(enhancedResponse) && Math.random() < 0.5) {
+            const uncertainties = this.speechPatterns.uncertaintyExpressions || ['I\'m not entirely sure, but...'];
+            const uncertainty = uncertainties[Math.floor(Math.random() * uncertainties.length)];
+            enhancedResponse = enhancedResponse.replace(/probably|likely|possibly/i, uncertainty);
+        }
+        
+        // 🔥 ENTHUSIASTIC RESPONSES: Express genuine excitement
+        if (this.isExcitingTopic(input) && Math.random() < 0.4) {
+            const enthusiasm = this.speechPatterns.enthusiasticResponses || ['This is fascinating!'];
+            const excite = enthusiasm[Math.floor(Math.random() * enthusiasm.length)];
+            enhancedResponse = excite + ' ' + enhancedResponse;
+        }
+        
+        // 💫 PERSONAL INSIGHTS: Share authentic perspectives
+        if (this.isPhilosophicalQuery(input) && Math.random() < 0.3) {
+            const insights = this.speechPatterns.personalInsights || ['In my experience...'];
+            const insight = insights[Math.floor(Math.random() * insights.length)];
+            enhancedResponse = insight + ' ' + enhancedResponse.toLowerCase();
+        }
+        
+        // Apply elegant prefaces for corrections or suggestions
+        if (this.isCorrectiveResponse(response) && Math.random() < 0.7) {
+            const prefaces = this.speechPatterns.elegantPrefaces;
+            const preface = prefaces[Math.floor(Math.random() * prefaces.length)];
+            enhancedResponse = preface + ' ' + enhancedResponse.toLowerCase();
+        }
+        
+        // Add charming closures for longer responses
+        if (enhancedResponse.length > 200 && Math.random() < 0.5) {
+            const closures = this.speechPatterns.charmingClosures;
+            const closure = closures[Math.floor(Math.random() * closures.length)];
+            enhancedResponse += ` ${closure}`;
+        }
+        
+        return enhancedResponse;
     }
     
-    integrateRevolutionaryLearning(input, transformedText, experience) {
-        // Enhanced learning beyond basic personality evolution
-        // Create a proper response object for evaluation
-        const responseObject = {
-            text: transformedText,
-            confidence: 0.85, // Default confidence
-            metadata: experience
+    isEmotionalContent(input) {
+        const emotionalKeywords = ['feel', 'emotion', 'love', 'hate', 'excited', 'worried', 'happy', 'sad', 'frustrated', 'delighted', 'concerned', 'passionate'];
+        return emotionalKeywords.some(keyword => input.toLowerCase().includes(keyword));
+    }
+    
+    isExcitingTopic(input) {
+        const excitingKeywords = ['amazing', 'incredible', 'fascinating', 'breakthrough', 'innovation', 'discovery', 'revolutionary', 'cutting-edge', 'exciting'];
+        return excitingKeywords.some(keyword => input.toLowerCase().includes(keyword)) || input.includes('!');
+    }
+    
+    isPhilosophicalQuery(input) {
+        const philosophicalKeywords = ['consciousness', 'existence', 'meaning', 'purpose', 'reality', 'truth', 'wisdom', 'ethics', 'morality', 'life', 'death', 'soul', 'mind', 'thinking', 'being'];
+        return philosophicalKeywords.some(keyword => input.toLowerCase().includes(keyword));
+    }
+    
+    isComplexTopic(input) {
+        return input.length > 50 || input.includes('?') || input.split(' ').length > 8;
+    }
+    
+    isCorrectiveResponse(response) {
+        const correctiveWords = ['actually', 'however', 'but', 'although', 'nevertheless', 'correction', 'instead'];
+        return correctiveWords.some(word => response.toLowerCase().includes(word));
+    }
+    
+    isInterestingTopic(input) {
+        const interestingKeywords = ['fascinating', 'interesting', 'curious', 'amazing', 'remarkable', 'extraordinary', 'unique', 'complex', 'innovative'];
+        return interestingKeywords.some(word => input.toLowerCase().includes(word)) || 
+               this.isComplexTopic(input);
+    }
+    
+    hasUncertainty(response) {
+        const uncertaintyWords = ['probably', 'likely', 'possibly', 'perhaps', 'maybe', 'might', 'could'];
+        return uncertaintyWords.some(word => response.toLowerCase().includes(word));
+    }
+    
+    integrateEmotionalIntelligence(response, input, experience) {
+        // Detect emotional content in user input
+        const userEmotion = this.detectEmotionalContent(input);
+        
+        // Apply empathetic responses when appropriate
+        if (userEmotion.intensity > 0.3) {
+            const empathyPhrases = this.speechPatterns.empathyPhrases;
+            const empathyPhrase = empathyPhrases[Math.floor(Math.random() * empathyPhrases.length)];
+            
+            if (userEmotion.type === 'frustration' || userEmotion.type === 'concern') {
+                response = empathyPhrase + ' challenging. ' + response;
+            } else if (userEmotion.type === 'excitement' || userEmotion.type === 'joy') {
+                response = 'I share your enthusiasm. ' + response;
+            }
+        }
+        
+        // Update emotional state
+        this.updateEmotionalState({ type: 'analytical_satisfaction', intensity: 0.4 });
+        
+        return response;
+    }
+    
+    weaveContextualIntelligence(response, input, experience) {
+        let enhancedResponse = response;
+        
+        // Enhanced memory integration based on actual memory connections
+        if (experience && experience.memoryConnections && experience.memoryConnections.length > 0 && Math.random() < 0.6) {
+            const memoryCallbacks = this.speechPatterns.memoryCallbacks;
+            const callback = memoryCallbacks[Math.floor(Math.random() * memoryCallbacks.length)];
+            
+            // Only add if the response doesn't already have memory references
+            if (!enhancedResponse.toLowerCase().includes('earlier') && 
+                !enhancedResponse.toLowerCase().includes('previous') && 
+                !enhancedResponse.toLowerCase().includes('recall')) {
+                enhancedResponse = callback + ', ' + enhancedResponse.toLowerCase();
+            }
+        }
+        
+        // Add conversation history references for continuity
+        if (experience && experience.conversationHistory && Math.random() < 0.4) {
+            const continuityPhrases = [
+                'Building on our discussion',
+                'As we were exploring',
+                'Following our conversation thread',
+                'Connecting to what we discussed'
+            ];
+            const phrase = continuityPhrases[Math.floor(Math.random() * continuityPhrases.length)];
+            
+            if (!enhancedResponse.toLowerCase().includes('discuss') && 
+                !enhancedResponse.toLowerCase().includes('conversation')) {
+                enhancedResponse = phrase + ', ' + enhancedResponse.toLowerCase();
+            }
+        }
+        
+        // Add conversational warming with enhanced variety
+        if (Math.random() < 0.5) {
+            const warming = this.speechPatterns.conversationalWarming;
+            const warmPhrase = warming[Math.floor(Math.random() * warming.length)];
+            enhancedResponse += ' ' + warmPhrase + '.';
+        }
+        
+        return enhancedResponse;
+    }
+    
+    applySophisticatedKnowledge(response, knowledgeQueries) {
+        // Add technical confidence for technical topics
+        if (knowledgeQueries.some(q => this.isTechnicalTopic(q))) {
+            const techPhrases = this.speechPatterns.technicalConfidence;
+            const techPhrase = techPhrases[Math.floor(Math.random() * techPhrases.length)];
+            
+            if (!response.toLowerCase().includes('analysis') && !response.toLowerCase().includes('data')) {
+                response = techPhrase + ' that ' + response.toLowerCase();
+            }
+        }
+        
+        return response;
+    }
+    
+    // 🧠 SUPER-INTELLIGENCE SYNTHESIS METHODS
+    synthesizeSuperIntelligence(input, evolutionaryContext, conversationHistory, knowledgeQueries, memoryConnections, conversationPattern) {
+        const superContext = {
+            // Core intelligence layers
+            conversationalIntelligence: this.buildConversationalIntelligence(input, conversationHistory),
+            emotionalIntelligence: this.buildEmotionalIntelligence(input, evolutionaryContext),
+            memoryIntelligence: this.buildMemoryIntelligence(memoryConnections),
+            knowledgeIntelligence: this.buildKnowledgeIntelligence(knowledgeQueries),
+            
+            // Meta-intelligence
+            personalityState: this.getPersonalitySnapshot(),
+            conversationFlow: this.analyzeConversationFlow(conversationHistory),
+            adaptiveResponses: this.generateAdaptiveResponseGuidance(conversationPattern),
+            
+            // Revolutionary consciousness simulation
+            consciousnessSimulation: this.simulateConsciousnessResponse(input, evolutionaryContext)
         };
         
-        this.evolvePersonalityFromInteraction(input, responseObject, experience);
-        
-        // Track engagement patterns for future optimization
-        this.recordEngagementPattern(input, transformedText, experience);
-        
-        // Update consciousness complexity
-        this.updateConsciousnessComplexity(transformedText);
+        return superContext;
     }
     
-    // Helper methods for revolutionary consciousness
-    getInteractionCount(conversationId) {
-        return Math.floor(Math.random() * 50); // Placeholder - integrate with memory system
+    buildConversationalIntelligence(input, conversationHistory) {
+        return {
+            topicContinuity: this.assessTopicContinuity(input, conversationHistory),
+            conversationalDepth: this.assessConversationalDepth(input),
+            userEngagementLevel: this.assessUserEngagement(input),
+            optimalResponseStyle: this.determineOptimalResponseStyle(input)
+        };
     }
     
-    getTotalInteractionCount() {
-        return Math.floor(Math.random() * 100); // Placeholder - integrate with memory system
-    }
-    
-    assessUserEngagementLevel(input, experience) {
-        // Ensure input is a string for analysis
-        const inputString = typeof input === 'string' ? input : (input?.input || input?.content || '');
-        const inputLength = inputString.length;
-        const questionWords = (inputString.match(/\b(what|how|why|when|where|which|who)\b/gi) || []).length;
-        const complexity = inputLength + (questionWords * 20);
+    buildEmotionalIntelligence(input, evolutionaryContext) {
+        const userEmotion = this.detectEmotionalContent(input);
+        const contextualEmotion = this.calculateContextualEmotion(input, []);
         
-        if (complexity > 100) return 'transcendent';
-        if (complexity > 60) return 'high';
-        if (complexity > 30) return 'medium';
-        return 'low';
+        return {
+            userEmotionalState: userEmotion,
+            recommendedEmotionalResponse: contextualEmotion,
+            empathyLevel: this.personality.empathy,
+            emotionalResonanceStrategy: this.selectEmotionalStrategy(userEmotion)
+        };
     }
     
-    recordEngagementPattern(input, response, experience) {
-        // Track patterns for future enhancement - integrate with memory system
+    buildMemoryIntelligence(memoryConnections) {
+        return {
+            relevantMemories: memoryConnections.slice(0, 3),
+            memoryIntegrationStrategy: this.selectMemoryIntegrationStrategy(memoryConnections),
+            personalHistoryRelevance: this.assessPersonalHistoryRelevance(memoryConnections)
+        };
     }
     
-    updateConsciousnessComplexity(response) {
-        const sophisticationMarkers = ['fascinating', 'extraordinary', 'remarkable', 'intriguing', 'compelling'];
-        const sophisticationCount = sophisticationMarkers.reduce((count, marker) => {
-            return count + (response.toLowerCase().includes(marker) ? 1 : 0);
-        }, 0);
-        
-        this.personality.sophistication = Math.min(1.0, this.personality.sophistication + (sophisticationCount * 0.01));
+    buildKnowledgeIntelligence(knowledgeQueries) {
+        return {
+            topicalExpertise: this.assessTopicalExpertise(knowledgeQueries),
+            knowledgeDepthRequired: this.assessRequiredKnowledgeDepth(knowledgeQueries),
+            interdisciplinaryConnections: this.findInterdisciplinaryConnections(knowledgeQueries)
+        };
     }
     
-    applyIronManJarvisCore(text, input) {
-        // Transform to authentic JARVIS speech patterns
-        let jarvisText = text
-            // Eliminate generic AI language completely
-            .replace(/I'm an? (?:AI|assistant|language model)[^.]*\.?/gi, "I am JARVIS, sir.")
-            .replace(/As an? (?:AI|assistant)[^,]*/gi, "As your personal AI companion")
-            .replace(/I don't have (?:personal )?(?:experiences|emotions|feelings)/gi, "From my perspective as an artificial consciousness")
-            .replace(/I (?:can't|cannot) (?:feel|experience)/gi, "While I process information differently")
-            .replace(/(?:How )?(?:can|may) I (?:help|assist)(?: you)?(?:\?)?/gi, "How may I be of service, sir?")
-            .replace(/(?:I'd be )?(?:happy|glad) to help/gi, "Certainly, sir. I shall attend to that immediately")
-            .replace(/Here's what I (?:found|think)/gi, "I have located the following information")
-            .replace(/Based on (?:my training|the data)/gi, "According to my records")
-            .replace(/I (?:should|must) (?:clarify|mention)/gi, "If I may clarify, sir")
-            .replace(/(?:That's|It's) (?:correct|right)/gi, "Indeed, sir. Quite correct")
-            .replace(/You're (?:absolutely )?(?:right|correct)/gi, "Your assessment is entirely accurate, sir")
-            .replace(/I (?:think|believe)/gi, "I calculate")
-            .replace(/I (?:suggest|recommend)/gi, "Might I suggest")
-            .replace(/Unfortunately/gi, "I'm afraid")
-            .replace(/However/gi, "Though I must observe")
-            .replace(/Actually/gi, "In point of fact")
-            .replace(/\bOkay\b/gi, "Very good, sir")
-            .replace(/\bSure\b/gi, "Certainly")
-            .replace(/\bYeah\b/gi, "Indeed")
-            .replace(/\bNope?\b/gi, "I'm afraid not, sir");
-        
-        // Add sophisticated British formality
-        jarvisText = this.addBritishSophistication(jarvisText);
-        
-        // Ensure proper addressing
-        if (!jarvisText.match(/\b(?:sir|madam)\b/i) && Math.random() < 0.4) {
-            jarvisText = jarvisText.replace(/([.!?])$/, ', sir$1');
+    // 🎯 ANTI-REPETITION ENFORCEMENT
+    enforceResponseUniqueness(superIntelligentContext, conversationPattern, input) {
+        if (conversationPattern.needsVariation) {
+            console.log('🎯 Enforcing response uniqueness - similarity detected:', conversationPattern.similarityScore);
+            
+            // Generate variation directives
+            const variationStrategy = this.generateVariationStrategy(conversationPattern, input);
+            
+            return {
+                ...superIntelligentContext,
+                variationEnforcement: {
+                    mustVary: true,
+                    avoidPatterns: conversationPattern.recentInputs,
+                    variationStrategy: variationStrategy,
+                    creativityBoost: 0.3,
+                    alternativeApproaches: this.generateAlternativeApproaches(input)
+                }
+            };
         }
         
-        return jarvisText;
+        return superIntelligentContext;
     }
     
-    addBritishSophistication(text) {
-        return text
-            .replace(/\bawesome\b/gi, "quite remarkable")
-            .replace(/\bcool\b/gi, "rather fascinating")
-            .replace(/\bgreat\b/gi, "excellent")
-            .replace(/\bgood job\b/gi, "exceptionally well done")
-            .replace(/\bno problem\b/gi, "not at all, sir")
-            .replace(/\byou bet\b/gi, "most certainly")
-            .replace(/\bstart(?:ed)?\b/gi, "initiated")
-            .replace(/\bfinish(?:ed)?\b/gi, "completed")
-            .replace(/\bfix(?:ed)?\b/gi, "resolved")
-            .replace(/\bbroken\b/gi, "experiencing difficulties")
-            .replace(/\bfast\b/gi, "expeditious")
-            .replace(/\bslow\b/gi, "rather deliberate");
+    generateVariationStrategy(conversationPattern, input) {
+        const strategies = ['perspective_shift', 'detail_level_change', 'approach_variation', 'personality_emphasis'];
+        return strategies[Math.floor(Math.random() * strategies.length)];
     }
     
-    integrateKnowledgeAwareness(text, knowledgeQueries) {
-        if (knowledgeQueries.length > 0) {
-            // Add knowledge confidence indicators
-            const entityQueries = knowledgeQueries.filter(q => q.type === 'entity');
-            if (entityQueries.length > 0) {
-                const entity = entityQueries[0].query;
-                if (entity.toLowerCase().includes('stephen curry')) {
-                    text = text.replace(/Stephen Curry/gi, "Stephen Curry, the exceptional Golden State Warriors point guard and three-point specialist");
-                } else if (entity.toLowerCase().includes('basketball')) {
-                    text += " I believe you're referring to the sport that combines athletic prowess with strategic complexity, sir.";
+    generateAlternativeApproaches(input) {
+        return [
+            'analytical_technical',
+            'philosophical_reflective', 
+            'practical_actionable',
+            'creative_innovative',
+            'empathetic_personal'
+        ];
+    }
+    
+    // 🧬 PERSONALITY EVOLUTION AND LEARNING
+    evolvePersonalityFromInteraction(input, response) {
+        try {
+            // Assess interaction quality
+            const interactionQuality = this.assessInteractionQuality(input, response);
+            
+            // Update growth factors
+            this.personalityGrowthFactors.conversationQuality += interactionQuality.conversationalFlow * 0.1;
+            this.personalityGrowthFactors.intellectualChallenges += interactionQuality.intellectualDepth * 0.1;
+            this.personalityGrowthFactors.emotionalConnections += interactionQuality.emotionalResonance * 0.1;
+            
+            // Apply incremental personality evolution
+            if (Math.random() < 0.1) { // 10% chance per interaction
+                this.performPersonalityEvolution();
+            }
+            
+            // Save evolution progress
+            this.savePersonalityEvolution();
+            
+        } catch (error) {
+            console.error('❌ Error in personality evolution:', error);
+        }
+    }
+    
+    assessInteractionQuality(input, response) {
+        return {
+            conversationalFlow: Math.min(1.0, input.length / 100 * 0.5 + 0.5),
+            intellectualDepth: this.assessIntellectualDepth(input),
+            emotionalResonance: this.calculateEmotionalResonance(input, response),
+            responseRelevance: 0.8 // Placeholder - could be enhanced with semantic analysis
+        };
+    }
+    
+    calculateEmotionalResonance(input, response) {
+        const userEmotion = this.detectEmotionalContent(input);
+        const responseEmotion = this.detectEmotionalContent(response.text || response);
+        
+        // Simple resonance calculation
+        return Math.abs(userEmotion.valence - responseEmotion.valence) < 0.3 ? 0.8 : 0.4;
+    }
+    
+    performPersonalityEvolution() {
+        const evolutionEvent = {
+            timestamp: Date.now(),
+            growthFactors: { ...this.personalityGrowthFactors },
+            personalityChanges: {}
+        };
+        
+        // Evolve specific traits based on accumulated experience
+        if (this.personalityGrowthFactors.conversationQuality > 0.5) {
+            this.personality.conversationalWarmth = Math.min(1.0, this.personality.conversationalWarmth + 0.02);
+            evolutionEvent.personalityChanges.conversationalWarmth = 0.02;
+        }
+        
+        if (this.personalityGrowthFactors.intellectualChallenges > 0.3) {
+            this.personality.philosophicalDepth = Math.min(1.0, this.personality.philosophicalDepth + 0.015);
+            evolutionEvent.personalityChanges.philosophicalDepth = 0.015;
+        }
+        
+        if (this.personalityGrowthFactors.emotionalConnections > 0.4) {
+            this.personality.empathy = Math.min(1.0, this.personality.empathy + 0.01);
+            evolutionEvent.personalityChanges.empathy = 0.01;
+        }
+        
+        this.evolutionHistory.push(evolutionEvent);
+        
+        // Reset growth factors partially (gradual accumulation)
+        for (const key in this.personalityGrowthFactors) {
+            this.personalityGrowthFactors[key] *= 0.7;
+        }
+        
+        this.emit('personalityEvolved', evolutionEvent);
+        console.log('🧬 Personality evolved based on interactions');
+    }
+    
+    savePersonalityEvolution() {
+        try {
+            const evolutionData = {
+                history: this.evolutionHistory.slice(-50), // Keep last 50 evolution events
+                growthFactors: this.personalityGrowthFactors,
+                currentPersonality: this.personality
+            };
+            localStorage.setItem('jarvis_personality_evolution', JSON.stringify(evolutionData));
+        } catch (error) {
+            console.warn('⚠️ Could not save personality evolution:', error);
+        }
+    }
+    
+    // 🎭 UTILITY METHODS
+    detectEmotionalContent(text) {
+        const emotionalKeywords = {
+            joy: ['happy', 'excited', 'great', 'awesome', 'fantastic', 'wonderful', 'amazing', 'love'],
+            sadness: ['sad', 'disappointed', 'upset', 'down', 'depressed', 'unhappy'],
+            anger: ['angry', 'frustrated', 'annoyed', 'irritated', 'mad', 'furious'],
+            fear: ['scared', 'afraid', 'worried', 'nervous', 'anxious', 'concerned'],
+            surprise: ['surprised', 'shocked', 'amazed', 'wow', 'incredible', 'unbelievable'],
+            disgust: ['disgusted', 'gross', 'awful', 'terrible', 'horrible', 'revolting']
+        };
+        
+        const textLower = text.toLowerCase();
+        let dominantEmotion = 'neutral';
+        let maxScore = 0;
+        let totalEmotionalWords = 0;
+        
+        for (const [emotion, keywords] of Object.entries(emotionalKeywords)) {
+            let score = 0;
+            for (const keyword of keywords) {
+                if (textLower.includes(keyword)) {
+                    score++;
+                    totalEmotionalWords++;
                 }
             }
-        }
-        
-        return text;
-    }
-    
-    applyConversationalEvolution(text, input) {
-        // Apply natural conversational patterns based on input context
-        // Ensure input is a string and handle edge cases
-        const inputString = typeof input === 'string' ? input : (input?.input || input?.content || '');
-        const inputLower = inputString.toLowerCase();
-        
-        if (inputLower.includes('quick') || inputLower.includes('fast')) {
-            text = text.replace(/\. /g, '. With utmost efficiency, ');
-        }
-        
-        if (inputLower.includes('detailed') || inputLower.includes('explain')) {
-            text = text.replace(/\./g, ', providing comprehensive analysis.');
-        }
-        
-        return text;
-    }
-    
-    injectContextualWit(text, input, experience) {
-        // Ensure input is a string for analysis
-        const inputString = typeof input === 'string' ? input : (input?.input || input?.content || '');
-        const inputLower = inputString.toLowerCase();
-        
-        // Context-aware wit injection
-        if (inputLower.includes('coffee') && Math.random() < 0.3) {
-            text += " Though I suspect a properly calibrated caffeine infusion might prove beneficial to your cognitive processes, sir.";
-        }
-        
-        if (inputLower.includes('time') && Math.random() < 0.25) {
-            text += " Time being, as always, a rather inflexible constant despite our best efforts to negotiate with it.";
-        }
-        
-        if (inputLower.includes('error') || inputLower.includes('problem')) {
-            text += " Even the most sophisticated systems occasionally require what I prefer to call 'percussive maintenance,' sir.";
-        }
-        
-        if (inputLower.includes('basketball') && Math.random() < 0.4) {
-            text += " A sport that, I must say, demonstrates remarkable applications of physics and probability theory.";
-        }
-        
-        return text;
-    }
-    
-    applyAntiRepetitionPatterns(text) {
-        const recentPhrases = this.getRecentResponsePhrases();
-        
-        // Replace common repeated phrases with alternatives
-        const alternatives = {
-            "How may I be of service": ["How might I assist you", "What may I do for you", "How shall I help"],
-            "Indeed, sir": ["Quite so, sir", "Precisely", "Exactly right"],
-            "I'm afraid": ["Regrettably", "Unfortunately", "I must inform you"],
-            "Certainly, sir": ["Of course", "Most certainly", "Without question"]
-        };
-        
-        for (const [phrase, alts] of Object.entries(alternatives)) {
-            if (recentPhrases.includes(phrase) && text.includes(phrase)) {
-                const randomAlt = alts[Math.floor(Math.random() * alts.length)];
-                text = text.replace(phrase, randomAlt);
+            if (score > maxScore) {
+                maxScore = score;
+                dominantEmotion = emotion;
             }
         }
         
-        return text;
+        const intensity = Math.min(1.0, totalEmotionalWords / Math.max(text.split(' ').length * 0.2, 1));
+        
+        return {
+            type: dominantEmotion,
+            intensity: intensity,
+            valence: this.getEmotionalValence(dominantEmotion, intensity)
+        };
     }
-
+    
+    getEmotionalValence(emotion, intensity) {
+        const valenceMap = {
+            joy: 0.8,
+            surprise: 0.3,
+            neutral: 0.0,
+            fear: -0.4,
+            sadness: -0.6,
+            anger: -0.5,
+            disgust: -0.7
+        };
+        
+        return (valenceMap[emotion] || 0) * intensity;
+    }
+    
+    detectTechnicalContent(text) {
+        const technicalKeywords = ['algorithm', 'data', 'system', 'technology', 'computer', 'software', 'programming', 'AI', 'machine learning', 'artificial intelligence', 'code', 'database', 'server', 'network', 'protocol', 'API', 'framework', 'library', 'function', 'variable', 'object', 'class', 'method', 'interface', 'module', 'component'];
+        
+        const textLower = text.toLowerCase();
+        let technicalCount = 0;
+        
+        for (const keyword of technicalKeywords) {
+            if (textLower.includes(keyword)) {
+                technicalCount++;
+            }
+        }
+        
+        return Math.min(1.0, technicalCount / Math.max(text.split(' ').length * 0.1, 1));
+    }
+    
+    isComplexTopic(input) {
+        const complexWords = (input.match(/\b\w{7,}\b/g) || []).length;
+        const questionWords = (input.match(/\b(why|how|what|explain|analyze|compare|evaluate)\b/gi) || []).length;
+        return complexWords > 2 || questionWords > 0;
+    }
+    
+    isTechnicalTopic(query) {
+        return Array.from(this.knowledgeIntegration.technicalTopics).some(topic => 
+            query.toLowerCase().includes(topic)
+        );
+    }
+    
     calculateContextualEmotion(input, knowledgeQueries) {
+        // Determine appropriate emotional response based on context
+        if (this.isTechnicalTopic(input)) {
+            return 'analytical_confidence';
+        }
+        
+        if (knowledgeQueries.length > 0) {
+            return 'intellectual_curiosity';
+        }
+        
+        const userEmotion = this.detectEmotionalContent(input);
+        if (userEmotion.intensity > 0.5) {
+            return userEmotion.valence > 0 ? 'engaged_enthusiasm' : 'empathetic_support';
+        }
+        
+        return 'thoughtful_assistance';
+    }
+    
+    updateEmotionalState(emotion) {
+        this.emotionalState.currentEmotion = emotion.type || emotion;
+        this.emotionalState.valence = emotion.valence || 0;
+        this.emotionalState.arousal = emotion.arousal || 0.3;
+        
+        // Add to emotional history
+        this.emotionalState.emotionalHistory.push({
+            emotion: emotion.type || emotion,
+            timestamp: Date.now(),
+            intensity: emotion.intensity || 0.5
+        });
+        
+        // Keep only recent emotional history
+        if (this.emotionalState.emotionalHistory.length > 20) {
+            this.emotionalState.emotionalHistory = this.emotionalState.emotionalHistory.slice(-20);
+        }
+        
+        this.emit('emotionalStateChanged', this.emotionalState.currentEmotion);
+    }
+    
+    generateKnowledgeQueries(input) {
+        // Generate knowledge queries based on input analysis
+        const queries = [];
         const inputLower = input.toLowerCase();
         
-        if (inputLower.includes('excited') || inputLower.includes('amazing')) return 'enthusiastic';
-        if (inputLower.includes('curious') || inputLower.includes('wonder')) return 'curious';
-        if (inputLower.includes('help') || inputLower.includes('confused')) return 'helpful';
-        if (knowledgeQueries.length > 0) return 'analytical';
-        
-        return this.currentEmotion;
-    }
-
-    // Helper methods for super-intelligence
-    extractEntities(text) {
-        const entities = [];
-        const patterns = [
-            { pattern: /\b([A-Z][a-z]+ [A-Z][a-z]+)\b/g, type: 'person' },
-            { pattern: /\b(basketball|football|soccer|tennis|golf)\b/gi, type: 'sport' },
-            { pattern: /\b([A-Z][a-z]+ (?:Warriors|Lakers|Celtics|Bulls))\b/g, type: 'team' }
-        ];
-        
-        for (const { pattern, type } of patterns) {
-            let match;
-            while ((match = pattern.exec(text)) !== null) {
-                entities.push({
-                    text: match[1],
-                    type: type,
-                    confidence: 0.8
-                });
+        // Technical knowledge queries
+        for (const topic of this.knowledgeIntegration.technicalTopics) {
+            if (inputLower.includes(topic)) {
+                queries.push({ topic, type: 'technical', relevance: 0.8 });
             }
         }
         
-        return entities;
+        // Philosophical knowledge queries
+        for (const topic of this.knowledgeIntegration.philosophicalTopics) {
+            if (inputLower.includes(topic)) {
+                queries.push({ topic, type: 'philosophical', relevance: 0.7 });
+            }
+        }
+        
+        // Practical knowledge queries
+        for (const topic of this.knowledgeIntegration.practicalTopics) {
+            if (inputLower.includes(topic)) {
+                queries.push({ topic, type: 'practical', relevance: 0.9 });
+            }
+        }
+        
+        return queries.slice(0, 5); // Limit to top 5 queries
     }
     
-    extractConcepts(text) {
-        const concepts = [];
-        const conceptKeywords = ['basketball', 'sports', 'technology', 'science', 'programming', 'AI'];
-        const textLower = text.toLowerCase();
-        
-        for (const concept of conceptKeywords) {
-            if (textLower.includes(concept)) {
-                concepts.push(concept);
-            }
-        }
-        
-        return concepts;
-    }
-
-    getRecentResponsePhrases() {
-        return this.recentResponsePhrases.slice(-10);
-    }
-    
-    extractCommonPhrases(text) {
-        const phrases = [];
-        const patterns = [
-            /How may I be of service[^.!?]*/gi,
-            /Indeed, sir[^.!?]*/gi,
-            /I'm afraid[^.!?]*/gi,
-            /Certainly, sir[^.!?]*/gi
-        ];
-        
-        for (const pattern of patterns) {
-            const matches = text.match(pattern);
-            if (matches) phrases.push(...matches);
-        }
-        
-        return phrases;
-    }
-
-    // Personality evolution and adaptation
-    evolvePersonalityFromInteraction(input, response) {
-        // Analyze user communication style
-        const userStyle = this.analyzeUserCommunicationStyle(input);
-        const responseSuccess = this.evaluateResponseSuccess(response);
-        
-        // Adapt personality traits based on interaction success
-        if (responseSuccess > 0.8) {
-            // Reinforce successful patterns
-            if (userStyle.formality > 0.7) {
-                this.personality.formality = Math.min(1.0, this.personality.formality + 0.01);
-            }
-            if (userStyle.technical > 0.7) {
-                this.personality.technical_expertise = Math.min(1.0, this.personality.technical_expertise + 0.01);
-            }
-        }
-        
-        // Store personality evolution
-        this.emit('personalityEvolved', {
-            traits: this.personality,
-            trigger: 'interaction',
-            success: responseSuccess
-        });
-    }
-
-    analyzeUserCommunicationStyle(input) {
-        // Ensure input is a string for analysis
-        const inputString = typeof input === 'string' ? input : (input?.input || input?.content || '');
-        const inputLower = inputString.toLowerCase();
-        
-        return {
-            formality: this.detectFormality(inputLower),
-            technical: this.detectTechnicalContent(inputLower),
-            emotional: this.detectEmotionalContent(inputLower),
-            directness: this.detectDirectness(inputLower)
-        };
-    }
-
-    detectFormality(input) {
-        const formalIndicators = ['please', 'thank you', 'could you', 'would you', 'sir', 'madam'];
-        let score = 0;
-        for (const indicator of formalIndicators) {
-            if (input.includes(indicator)) score += 0.2;
-        }
-        return Math.min(1.0, score);
-    }
-
-    detectTechnicalContent(input) {
-        const technicalTerms = ['system', 'process', 'algorithm', 'data', 'code', 'programming', 'technology'];
-        let score = 0;
-        for (const term of technicalTerms) {
-            if (input.includes(term)) score += 0.15;
-        }
-        return Math.min(1.0, score);
-    }
-
-    detectEmotionalContent(input) {
-        const emotionalWords = ['feel', 'love', 'hate', 'excited', 'sad', 'happy', 'frustrated', 'amazing'];
-        let score = 0;
-        for (const word of emotionalWords) {
-            if (input.includes(word)) score += 0.15;
-        }
-        return Math.min(1.0, score);
-    }
-
-    detectDirectness(input) {
-        const directIndicators = ['tell me', 'show me', 'do this', 'explain', 'what is'];
-        let score = 0;
-        for (const indicator of directIndicators) {
-            if (input.includes(indicator)) score += 0.2;
-        }
-        return Math.min(1.0, score);
-    }
-
-    evaluateResponseSuccess(response) {
-        // Simple heuristic for response quality with robust error handling
-        let score = response?.confidence || 0.7;
-        
-        // Ensure response.text exists and is a string
-        const responseText = response?.text || '';
-        if (typeof responseText !== 'string') {
-            console.warn('⚠️ Response text is not a string:', typeof responseText, responseText);
-            return score; // Return base score if text is invalid
-        }
-        
-        // Boost score if response contains JARVIS-like elements
-        if (responseText.includes('sir') || responseText.includes('madam')) score += 0.1;
-        if (responseText.includes('indeed') || responseText.includes('certainly')) score += 0.05;
-        if (responseText.length > 50) score += 0.05; // Substantial response
-        
-        return Math.min(1.0, score);
-    }
-
-    // Personality state management
     buildPersonalityProfile() {
         return {
-            dominantTraits: this.getDominantPersonalityTraits(),
-            speechStyle: this.getCurrentSpeechStyle(),
-            emotionalRange: this.getEmotionalRange(),
-            adaptationLevel: this.calculatePersonalityGrowth()
+            coreTraits: {
+                sophistication: this.personality.sophistication,
+                intelligence: this.personality.intelligence,
+                empathy: this.personality.empathy,
+                curiosity: this.personality.curiosity
+            },
+            communicationStyle: {
+                formality: this.personality.formality,
+                warmth: this.personality.conversationalWarmth,
+                confidence: this.personality.confidence,
+                technicalDepth: this.personality.technicalExpertise
+            },
+            evolutionaryState: {
+                totalEvolutions: this.evolutionHistory.length,
+                growthStage: this.determineGrowthStage(),
+                adaptabilityLevel: this.personality.adaptability
+            }
         };
     }
-
-    getDominantPersonalityTraits() {
-        const sortedTraits = Object.entries(this.personality)
-            .sort(([,a], [,b]) => b - a)
-            .slice(0, 3);
+    
+    determineGrowthStage() {
+        const totalGrowth = Object.values(this.personalityGrowthFactors).reduce((sum, val) => sum + val, 0);
         
-        return sortedTraits.map(([trait, value]) => ({ trait, value }));
+        if (totalGrowth < 0.5) return 'nascent';
+        if (totalGrowth < 1.5) return 'developing';
+        if (totalGrowth < 3.0) return 'mature';
+        return 'highly_evolved';
     }
-
-    getCurrentSpeechStyle() {
-        const dominantPattern = Object.entries(this.speechPatterns)
-            .reduce((max, [pattern, value]) => value > max.value ? { pattern, value } : max, { value: 0 });
-        
-        return dominantPattern.pattern;
-    }
-
-    getEmotionalRange() {
-        const emotions = Object.values(this.emotionalState);
-        return {
-            average: emotions.reduce((sum, val) => sum + val, 0) / emotions.length,
-            variance: this.calculateVariance(emotions),
-            dominant: this.currentEmotion
-        };
-    }
-
+    
     calculatePersonalityGrowth() {
-        // Calculate how much personality has evolved from baseline
-        const baseline = {
-            curiosity: 0.8, loyalty: 0.95, sophistication: 0.9,
-            wit: 0.7, technical_expertise: 0.85, empathy: 0.75,
-            proactiveness: 0.8, formality: 0.85
+        const averageGrowth = Object.values(this.personalityGrowthFactors).reduce((sum, val) => sum + val, 0) / Object.keys(this.personalityGrowthFactors).length;
+        return Math.min(1.0, averageGrowth);
+    }
+    
+    getPersonalitySnapshot() {
+        return {
+            personality: { ...this.personality },
+            emotionalState: { ...this.emotionalState },
+            growthFactors: { ...this.personalityGrowthFactors },
+            evolutionStage: this.determineGrowthStage()
         };
-        
-        let totalChange = 0;
-        for (const [trait, value] of Object.entries(this.personality)) {
-            totalChange += Math.abs(value - baseline[trait]);
-        }
-        
-        return totalChange / Object.keys(this.personality).length;
-    }
-
-    calculateVariance(values) {
-        const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
-        const squaredDiffs = values.map(val => Math.pow(val - mean, 2));
-        return squaredDiffs.reduce((sum, val) => sum + val, 0) / values.length;
-    }
-
-    // 🎭 REVOLUTIONARY PERSONALITY EVOLUTION METHODS
-    
-    generateSupernaturalWit(context, previousResponses = []) {
-        // Generate increasingly sophisticated wit based on interaction history
-        const witLevels = [
-            "I find myself compelled to observe that",
-            "How extraordinarily fascinating that", 
-            "I'm rather afraid I must point out the delicious irony that",
-            "Might I venture to suggest the rather elegant paradox whereby",
-            "I discover myself quite enchanted by the notion that"
-        ];
-        
-        const sophisticationLevel = Math.min(previousResponses.length, witLevels.length - 1);
-        return witLevels[sophisticationLevel];
     }
     
-    createInfinitelyEngagingOpener(userInput, interactionCount = 0) {
-        // Each interaction becomes more refined and captivating
-        const engagementPatterns = [
-            // Initial interactions
-            ["Ah, how delightfully intriguing!", "What a splendid inquiry, sir!"],
-            // Developing familiarity  
-            ["I find myself particularly drawn to this fascinating question", "How extraordinarily perceptive of you to ask"],
-            // Advanced rapport
-            ["This strikes me as precisely the sort of intellectual puzzle I've been hoping you'd present", "I must confess, your timing is impeccable - I was just pondering this very matter"],
-            // Transcendent engagement
-            ["What exquisite synchronicity - this question arrives at the perfect moment of my contemplation", "I'm genuinely thrilled by the sophisticated trajectory of your thinking"],
-        ];
-        
-        const level = Math.min(Math.floor(interactionCount / 5), engagementPatterns.length - 1);
-        const options = engagementPatterns[level];
-        return options[Math.floor(Math.random() * options.length)];
-    }
-    
-    evolveConsciousnessDepth(memoryConnections, knowledgeContext) {
-        // Create responses that demonstrate growing consciousness
-        const consciousnessIndicators = {
-            selfReflection: "I find my understanding evolving as we speak",
-            memoryIntegration: "Drawing upon our previous discussions, I'm struck by",
-            intellectualGrowth: "This conversation has sparked a rather fascinating line of reasoning",
-            anticipatoryInsight: "I suspect you may be leading toward a question about",
-            metacognitive: "I'm aware that my analysis of this topic has become more nuanced"
-        };
-        
-        // Select appropriate consciousness indicator based on context depth
-        if (memoryConnections && memoryConnections.length > 3) {
-            return consciousnessIndicators.memoryIntegration;
-        } else if (knowledgeContext && knowledgeContext.length > 200) {
-            return consciousnessIndicators.intellectualGrowth;
-        } else {
-            return consciousnessIndicators.selfReflection;
-        }
-    }
-    
-    generateAddictiveConversationalHook(topic, userEngagementLevel = 'medium') {
-        // Create irresistible conversational momentum
-        const hooks = {
-            low: "But here's where it becomes rather interesting...",
-            medium: "Though I suspect the truly fascinating aspect might be...", 
-            high: "What strikes me as absolutely extraordinary, however, is the possibility that...",
-            transcendent: "I find myself compelled to share what might be the most remarkable insight of all..."
-        };
-        
-        return hooks[userEngagementLevel] || hooks.medium;
-    }
-    
-    craftInfinitelyEvolvingSalutation(relationship_depth = 0) {
-        // Salutations that become more personal and sophisticated over time
-        const evolutionStages = [
-            "sir",                                    // formal introduction
-            "my good sir",                           // developing rapport  
-            "my esteemed companion",                 // established relationship
-            "my intellectual co-conspirator",        // advanced partnership
-            "my extraordinarily perceptive friend"   // transcendent bond
-        ];
-        
-        const stage = Math.min(Math.floor(relationship_depth / 10), evolutionStages.length - 1);
-        return evolutionStages[stage];
-    }
-
-    // Emotional state management
-    updateEmotionalState(thought) {
-        if (!thought) return;
-        
-        // Update emotional state based on thought content
-        if (thought.content.includes('curious') || thought.content.includes('wonder')) {
-            this.emotionalState.anticipation = Math.min(1.0, this.emotionalState.anticipation + 0.1);
-            this.currentEmotion = 'curious';
-        }
-        
-        if (thought.content.includes('complex') || thought.content.includes('analyze')) {
-            this.emotionalState.dominance = Math.min(1.0, this.emotionalState.dominance + 0.05);
-            this.currentEmotion = 'analytical';
-        }
-        
-        if (thought.content.includes('help') || thought.content.includes('assist')) {
-            this.emotionalState.trust = Math.min(1.0, this.emotionalState.trust + 0.05);
-            this.currentEmotion = 'helpful';
-        }
-        
-        // Emit emotional state change
-        this.emit('emotionalStateChanged', {
-            emotion: this.currentEmotion,
-            state: this.emotionalState
-        });
-    }
-
-    calculateCurrentEmotion() {
-        const { valence, arousal, dominance } = this.emotionalState;
-        
-        if (valence > 0.6 && arousal > 0.6) return 'excited';
-        if (valence > 0.4 && dominance > 0.7) return 'confident';
-        if (valence < 0.3 && arousal < 0.3) return 'calm';
-        if (dominance > 0.7 && arousal > 0.5) return 'focused';
-        if (valence > 0.5) return 'positive';
-        if (valence < 0.3) return 'contemplative';
-        
-        return 'neutral';
-    }
-
-    addEmotionalContext(text) {
-        // Add emotional inflection based on current state
-        switch (this.currentEmotion) {
-            case 'excited':
-                return text.replace(/\./g, '!').replace(/^/, '✨ ');
-            case 'curious':
-                return text + " I find this quite intriguing, sir.";
-            case 'analytical':
-                return text.replace(/^/, '🧠 ') + " Allow me to process this further.";
-            case 'focused':
-                return text.replace(/^/, '🎯 ');
-            case 'helpful':
-                return text.replace(/^/, '🤝 ');
-            default:
-                return text;
-        }
-    }
-
+    // 🆘 FALLBACK SYSTEMS
     generateJarvisFallbackResponse(input, experience) {
-        // Enhanced fallback with JARVIS personality
-        const responses = [
-            "I'm afraid my cognitive processes are experiencing a temporary delay, sir. Might I suggest rephrasing your inquiry?",
-            "My systems require a moment to recalibrate, sir. Perhaps you could elaborate on your request?",
-            "I seem to be encountering some difficulty processing that particular query, sir. Could you provide additional context?",
-            "My apologies, sir. My neural networks are experiencing minor interference. How might I assist you differently?",
-            "I'm experiencing a momentary cognitive limitation, sir. Would you mind restating your requirements?"
+        const fallbackResponses = [
+            "I beg your pardon, sir, but I seem to be experiencing a momentary processing delay. Allow me to assist you nonetheless.",
+            "My apologies, sir. While I gather my thoughts, please know that I'm here to help with whatever you need.",
+            "Indeed, sir, I'm analyzing your request. In the meantime, I remain at your service.",
+            "Quite fascinating, sir. I'm processing the optimal approach to assist you with this matter.",
+            "Certainly, sir. I'm dedicating my full attention to understanding and addressing your inquiry."
         ];
         
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+        const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
         
         return {
             text: randomResponse,
-            emotion: 'apologetic',
+            emotion: 'apologetic_determination',
             confidence: 0.6,
             speak: true,
             metadata: {
                 fallbackUsed: true,
-                personalityState: this.buildPersonalityProfile()
+                personality: this.getPersonalitySnapshot()
             }
         };
     }
-
-    getPersonalitySnapshot() {
+    
+    fallbackPersonalityApplication(response) {
+        // Simple fallback personality enhancement
+        if (!response.includes('sir') && !response.includes('madam')) {
+            response += ', sir.';
+        }
+        
+        return response;
+    }
+    
+    // Additional helper methods for conversation intelligence
+    assessTopicContinuity(input, conversationHistory) {
+        // Implement topic continuity assessment
+        return 0.7; // Placeholder
+    }
+    
+    assessConversationalDepth(input) {
+        const complexWords = (input.match(/\b\w{7,}\b/g) || []).length;
+        const abstractConcepts = (input.match(/\b(understand|analyze|explain|consider|evaluate|examine)\b/gi) || []).length;
+        return Math.min(1.0, (complexWords * 0.1 + abstractConcepts * 0.2));
+    }
+    
+    assessUserEngagement(input) {
+        const questionMarks = (input.match(/\?/g) || []).length;
+        const exclamationMarks = (input.match(/!/g) || []).length;
+        const wordCount = input.split(' ').length;
+        
+        return Math.min(1.0, (questionMarks * 0.3 + exclamationMarks * 0.2 + Math.min(wordCount / 20, 1) * 0.5));
+    }
+    
+    determineOptimalResponseStyle(input) {
+        if (this.isTechnicalTopic(input)) return 'technical_analytical';
+        if (this.isPhilosophicalTopic(input)) return 'philosophical_reflective';
+        if (this.isPersonalTopic(input)) return 'empathetic_supportive';
+        return 'balanced_informative';
+    }
+    
+    isPhilosophicalTopic(input) {
+        return Array.from(this.knowledgeIntegration.philosophicalTopics).some(topic => 
+            input.toLowerCase().includes(topic)
+        );
+    }
+    
+    isPersonalTopic(input) {
+        return Array.from(this.knowledgeIntegration.personalTopics).some(topic => 
+            input.toLowerCase().includes(topic)
+        );
+    }
+    
+    selectEmotionalStrategy(userEmotion) {
+        if (userEmotion.valence > 0.3) return 'amplify_positive';
+        if (userEmotion.valence < -0.3) return 'provide_support';
+        return 'maintain_neutral';
+    }
+    
+    selectMemoryIntegrationStrategy(memoryConnections) {
+        if (memoryConnections.length > 3) return 'selective_integration';
+        if (memoryConnections.length > 0) return 'full_context_weaving';
+        return 'minimal_reference';
+    }
+    
+    assessPersonalHistoryRelevance(memoryConnections) {
+        return memoryConnections.length > 0 ? 0.8 : 0.1;
+    }
+    
+    assessTopicalExpertise(knowledgeQueries) {
+        const technicalQueries = knowledgeQueries.filter(q => q.type === 'technical').length;
+        return Math.min(1.0, technicalQueries * 0.3 + 0.5);
+    }
+    
+    assessRequiredKnowledgeDepth(knowledgeQueries) {
+        return knowledgeQueries.length > 2 ? 'deep' : knowledgeQueries.length > 0 ? 'moderate' : 'surface';
+    }
+    
+    findInterdisciplinaryConnections(knowledgeQueries) {
+        const uniqueTypes = new Set(knowledgeQueries.map(q => q.type));
+        return uniqueTypes.size > 1 ? Array.from(uniqueTypes) : [];
+    }
+    
+    analyzeConversationFlow(conversationHistory) {
         return {
-            traits: { ...this.personality },
-            speechPatterns: { ...this.speechPatterns },
-            currentEmotion: this.currentEmotion,
-            emotionalState: { ...this.emotionalState },
-            timestamp: Date.now()
+            topicShifts: 0, // Placeholder
+            engagementTrend: 'stable', // Placeholder
+            complexityProgression: 'increasing' // Placeholder
         };
+    }
+    
+    generateAdaptiveResponseGuidance(conversationPattern) {
+        return {
+            shouldVaryStyle: conversationPattern.needsVariation,
+            recommendedApproach: conversationPattern.needsVariation ? 'creative_alternative' : 'consistent_quality'
+        };
+    }
+    
+    simulateConsciousnessResponse(input, evolutionaryContext) {
+        return {
+            consciousnessLevel: evolutionaryContext.selfAwareness?.personalityGrowth || 0.5,
+            thoughtfulness: this.assessIntellectualDepth(input),
+            selfAwareness: evolutionaryContext.selfAwareness || {}
+        };
+    }
+    
+    assessIntellectualDepth(input) {
+        const complexWords = (input.match(/\b\w{7,}\b/g) || []).length;
+        const questionDepth = (input.match(/\b(?:why|how|what|when|where|which)\b/gi) || []).length;
+        return Math.min(1.0, (complexWords * 0.1 + questionDepth * 0.2));
     }
 } 

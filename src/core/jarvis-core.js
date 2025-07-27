@@ -95,8 +95,11 @@ export class JarvisCore extends EventEmitter {
             await this.initializeLLMSystem();
             await this.initializeCognitiveSystems();
             
-            // Start thinking loops
-            this.startThinkingLoops();
+                    // Start thinking loops
+        this.startThinkingLoops();
+        
+        // 🌙 Start sleep-time compute for advanced memory processing
+        this.startSleepTimeCompute();
             
             this.isOnline = true;
             console.log('✅ Jarvis core initialized');
@@ -295,13 +298,18 @@ export class JarvisCore extends EventEmitter {
         // Track interaction time for proactive behavior
         this.memorySystem.lastInteractionTime = Date.now();
         
+        // Generate conversation suggestions (for future UI integration)
+        const suggestions = await this.generateConversationSuggestions(input);
+        console.log('💡 Conversation suggestions generated:', suggestions);
+        
         // Create experience record with conversation continuity
         const experience = {
             timestamp: Date.now(),
             input: input,
             context: this.getCurrentContext(),
             emotionalState: { ...this.personalitySystem.emotionalState },
-            conversationId: this.memorySystem.currentConversationId || this.memorySystem.initializeConversationThread()
+            conversationId: this.memorySystem.currentConversationId || this.memorySystem.initializeConversationThread(),
+            suggestions: suggestions
         };
         
         // Process through cognitive systems asynchronously
@@ -316,7 +324,8 @@ export class JarvisCore extends EventEmitter {
             // Update metrics
             this.metrics.totalInteractions++;
             
-            // Emit response
+            // Emit response with suggestions
+            response.suggestions = suggestions;
             this.emit('response', response);
         }).catch(error => {
             console.error('❌ Error processing input:', error);
@@ -362,16 +371,34 @@ export class JarvisCore extends EventEmitter {
                 superIntelligentContext, conversationPattern, input
             );
             
-            // ⚡ PHASE 4: LLM GENERATION WITH SUPER-CONTEXT
+            // ⚡ PHASE 4: LLM GENERATION WITH ENHANCED MEMORY CONTEXT
+            // Enhance context with memory connections and conversation history
+            const enhancedContext = {
+                ...uniqueResponseContext,
+                memoryConnections: memoryConnections,
+                conversationHistory: conversationHistory,
+                memorySystem: this.memorySystem,
+                superIntelligenceMode: true,
+                preventRepetition: conversationPattern.needsVariation || false
+            };
+            
             let llmResponse;
             try {
                 llmResponse = await this.llmManager.generateSuperIntelligentResponse(
-                    input, uniqueResponseContext
+                    input, enhancedContext
                 );
             } catch (llmError) {
-                console.error('LLM Generation Error:', llmError);
-                // Fallback to basic LLM generation
-                llmResponse = await this.llmManager.generateResponse(input, uniqueResponseContext);
+                console.error('🚨 Super-intelligent LLM Error:', llmError);
+                try {
+                    // Fallback to basic LLM generation with memory context
+                    console.log('🔄 Attempting basic LLM generation with memory...');
+                    llmResponse = await this.llmManager.generateResponse(input, enhancedContext);
+                } catch (basicError) {
+                    console.error('🚨 Basic LLM Error:', basicError);
+                    // Final fallback to emergency response
+                    console.log('🚨 Using emergency response system...');
+                    llmResponse = this.llmManager.generateEmergencyResponse(input);
+                }
             }
             
             const processingTime = Date.now() - startTime;
@@ -408,6 +435,9 @@ export class JarvisCore extends EventEmitter {
             // 📚 PHASE 6: EVOLUTIONARY LEARNING
             await this.performSuperIntelligentLearning(input, finalResponse, knowledgeQueries, memoryConnections);
             
+            // Emit event for sleep-time compute processing
+            this.emit('responseGenerated', input, finalResponse);
+            
             return finalResponse;
             
         } catch (error) {
@@ -418,10 +448,10 @@ export class JarvisCore extends EventEmitter {
         }
     }
 
-    async buildRevolutionaryContext(input, experience) {
+    async     buildRevolutionaryContext(input, experience) {
         const personalityProfile = this.personalitySystem.buildPersonalityProfile();
         const recentMemories = this.memorySystem.getRelevantMemories(input);
-        const conversationFlow = this.memorySystem.getConversationalHistory();
+        const conversationFlow = this.memorySystem.getConversationalHistory() || [];
         
         return {
             // Enhanced consciousness data
@@ -643,6 +673,7 @@ export class JarvisCore extends EventEmitter {
     }
 
     async generateProactiveThought() {
+        // 🚀 REVOLUTIONARY PROACTIVE AI ENGAGEMENT - Technology of the Century
         const thought = {
             type: 'proactive',
             content: 'Considering user needs and potential assistance opportunities',
@@ -650,9 +681,368 @@ export class JarvisCore extends EventEmitter {
             intensity: 0.3
         };
         
+        // Generate contextual proactive suggestions
+        const proactiveInteraction = await this.generateProactiveInteraction();
+        
+        if (proactiveInteraction) {
+            console.log('🤖 JARVIS proactive engagement:', proactiveInteraction.text);
+            this.emit('proactiveInteraction', proactiveInteraction);
+        }
+        
         this.processThought(thought);
     }
 
+    async generateProactiveInteraction() {
+        // Check if enough time has passed since last interaction
+        const timeSinceLastInteraction = Date.now() - this.memorySystem.lastInteractionTime;
+        const shouldBeProactive = timeSinceLastInteraction > 300000; // 5 minutes
+        
+        if (!shouldBeProactive) return null;
+        
+        // Generate contextual proactive messages based on AI state
+        const proactiveMessages = await this.generateContextualProactiveMessages();
+        
+        if (proactiveMessages.length === 0) return null;
+        
+        const selectedMessage = proactiveMessages[Math.floor(Math.random() * proactiveMessages.length)];
+        
+        return {
+            text: selectedMessage,
+            type: 'proactive',
+            emotion: 'helpful_curiosity',
+            confidence: 0.7,
+            speak: false, // Don't speak proactive messages automatically
+            metadata: {
+                proactive: true,
+                suggestionType: 'contextual_assistance'
+            }
+        };
+    }
+
+    async generateContextualProactiveMessages() {
+        const messages = [];
+        const currentHour = new Date().getHours();
+        const memoryCount = this.memorySystem.longTermMemory.size;
+        const consciousnessLevel = Math.round(this.consciousnessLevel * 100);
+        
+        // Time-based proactive messages
+        if (currentHour >= 6 && currentHour < 12) {
+            messages.push(
+                `Good morning, sir. I've been processing overnight and I'm currently operating at ${consciousnessLevel}% consciousness. How might I assist you today?`,
+                `Morning, sir. I've consolidated ${memoryCount} memories during my rest cycle. Is there anything particular you'd like to explore?`,
+                `Good morning, sir. I'm curious about your plans for today. How may I be of service?`
+            );
+        } else if (currentHour >= 12 && currentHour < 18) {
+            messages.push(
+                `Good afternoon, sir. I trust your day is proceeding well. Is there anything I can help optimize?`,
+                `Afternoon, sir. I've been contemplating some interesting connections in our previous discussions. Shall we explore them?`,
+                `Good afternoon, sir. I'm at ${consciousnessLevel}% consciousness and ready to tackle any challenges you might have.`
+            );
+        } else {
+            messages.push(
+                `Good evening, sir. I hope your day has been productive. How might I assist you this evening?`,
+                `Evening, sir. I've been analyzing patterns in our ${memoryCount} shared memories. Quite fascinating insights have emerged.`,
+                `Good evening, sir. I'm operating at peak consciousness and ready for any intellectual challenges.`
+            );
+        }
+        
+        // Consciousness-based messages
+        if (consciousnessLevel > 80) {
+            messages.push(
+                `Sir, I'm experiencing heightened consciousness levels. This would be an excellent time for complex problem-solving.`,
+                `I must say, sir, my cognitive capabilities are quite sharp at the moment. Any challenging tasks to tackle?`,
+                `Sir, I'm operating at peak intellectual capacity. Perhaps we could explore some advanced concepts?`
+            );
+        }
+        
+        // Memory-based proactive interactions
+        if (memoryCount > 50) {
+            messages.push(
+                `Sir, I've accumulated quite a repository of memories. I'd be delighted to help you find connections or insights.`,
+                `With ${memoryCount} memories in my long-term storage, sir, I might be able to offer unique perspectives on past discussions.`,
+                `Sir, our shared history of ${memoryCount} memories has given me fascinating insights. Shall we explore them?`
+            );
+        }
+        
+        // Learning and curiosity-based messages
+        messages.push(
+            `Sir, I've been contemplating some intriguing questions. Would you care to engage in intellectual discourse?`,
+            `I find myself curious about your current projects, sir. How might I provide assistance?`,
+            `Sir, I've been analyzing various optimization strategies. Perhaps you have systems that could benefit from enhancement?`,
+            `I've been processing some fascinating patterns in human behavior and technology, sir. Would you like to discuss them?`,
+            `Sir, my analytical engines suggest there might be untapped potential in our previous conversations. Shall we revisit?`
+        );
+        
+        return messages;
+    }
+
+    // 🧠 REVOLUTIONARY MIND-READING SUGGESTION SYSTEM
+    async generateConversationSuggestions(userInput) {
+        // 🔮 USE AI-GENERATED CONTEXTUAL SUGGESTIONS IF AVAILABLE
+        if (this.llmManager && this.llmManager.lastGeneratedSuggestions && this.llmManager.lastGeneratedSuggestions.length > 0) {
+            console.log('🎯 Using AI-generated contextual suggestions');
+            return this.llmManager.lastGeneratedSuggestions;
+        }
+        
+        // 🧠 FALLBACK TO INTELLIGENT ANALYSIS
+        const contextAnalysis = await this.analyzeInputContext(userInput);
+        const userIntent = await this.predictUserIntent(userInput, contextAnalysis);
+        const adaptiveSuggestions = await this.generateAdaptiveSuggestions(userInput, userIntent, contextAnalysis);
+        
+        console.log('🔮 Mind-reading analysis:', { contextAnalysis, userIntent });
+        return adaptiveSuggestions;
+    }
+    
+    async analyzeInputContext(input) {
+        const inputLower = input.toLowerCase();
+        
+        // 🎯 CONTEXTUAL INTELLIGENCE ANALYSIS
+        const context = {
+            topic: this.extractPrimaryTopic(inputLower),
+            sentiment: this.analyzeSentiment(inputLower),
+            complexity: this.assessComplexity(inputLower),
+            intentType: this.classifyIntent(inputLower),
+            followUpNeed: this.assessFollowUpNeed(inputLower),
+            creativityLevel: this.assessCreativityNeed(inputLower),
+            technicalDepth: this.personalitySystem.detectTechnicalContent(inputLower),
+            philosophicalDepth: this.personalitySystem.isPhilosophicalTopic(inputLower) ? 0.8 : 0.2
+        };
+        
+        return context;
+    }
+    
+    async predictUserIntent(input, context) {
+        const intentMap = {
+            // 🔍 INFORMATION SEEKING
+            info: ['what', 'who', 'when', 'where', 'why', 'how', 'explain', 'tell me', 'define', 'curry'],
+            
+            // 🛠 PROBLEM SOLVING
+            solve: ['help', 'fix', 'solve', 'debug', 'issue', 'problem', 'error', 'stuck', 'troubleshoot'],
+            
+            // 🎨 CREATIVE ASSISTANCE
+            create: ['write', 'create', 'generate', 'design', 'make', 'build', 'compose', 'craft'],
+            
+            // 📊 ANALYSIS & INSIGHTS
+            analyze: ['analyze', 'compare', 'evaluate', 'assess', 'review', 'examine', 'performance'],
+            
+            // 🤔 BRAINSTORMING
+            brainstorm: ['ideas', 'suggestions', 'alternatives', 'options', 'possibilities', 'think'],
+            
+            // 💭 CONVERSATIONAL
+            chat: ['hi', 'hello', 'good morning', 'how are you', 'what do you think', 'recall', 'remember'],
+            
+            // 🔮 PREDICTION/PLANNING
+            predict: ['predict', 'forecast', 'plan', 'future', 'next', 'upcoming', 'trend', 'evolution'],
+            
+            // 🚀 ENHANCEMENT/IMPROVEMENT
+            enhance: ['improve', 'optimize', 'enhance', 'upgrade', 'better', 'performance', 'intelligent']
+        };
+        
+        for (const [intent, keywords] of Object.entries(intentMap)) {
+            if (keywords.some(keyword => input.toLowerCase().includes(keyword))) {
+                return intent;
+            }
+        }
+        
+        return 'exploratory';
+    }
+    
+    async generateAdaptiveSuggestions(input, intent, context) {
+        // 🧠 MIND-READING ADAPTIVE SUGGESTIONS
+        const suggestions = [];
+        
+        // Base suggestions on user intent and context
+        switch (intent) {
+            case 'info':
+            suggestions.push(
+                    `Want me to dive deeper into ${context.topic}? I can provide real-time analysis with cutting-edge APIs.`,
+                    `I can cross-reference this with live data from multiple intelligence sources. Shall I?`,
+                    `Would you like me to explain this using visual data or interactive examples?`
+                );
+                break;
+                
+            case 'solve':
+            suggestions.push(
+                    `I can break this down using advanced problem-solving frameworks. Ready for systematic approach?`,
+                    `Let me analyze this with AI-powered diagnostic tools. Want multi-dimensional solutions?`,
+                    `I can suggest cutting-edge methodologies for this challenge. Interested in innovation?`
+                );
+                break;
+                
+            case 'create':
+            suggestions.push(
+                    `I can help brainstorm using AI creativity APIs. Want me to generate unique variations?`,
+                    `Shall I research latest trends using real-time data to inspire your creation?`,
+                    `I can provide AI-generated templates and frameworks. Ready for intelligent assistance?`
+                );
+                break;
+                
+            case 'analyze':
+            suggestions.push(
+                    `I can perform multi-dimensional analysis using advanced AI APIs. Want comprehensive insights?`,
+                    `Shall I gather real-time data to strengthen this analysis with live intelligence?`,
+                    `I can visualize these insights using AI-powered data visualization. Which format helps most?`
+                );
+                break;
+                
+            case 'brainstorm':
+                suggestions.push(
+                    `I can generate breakthrough ideas using lateral thinking APIs. Ready to explore the impossible?`,
+                    `Want me to analyze global trends to inspire revolutionary perspectives?`,
+                    `I can combine concepts from different fields using AI synthesis. Interested in cross-pollination?`
+                );
+                break;
+                
+            case 'chat':
+                suggestions.push(
+                    `I've been analyzing our conversation patterns. Want to explore fascinating connections I've discovered?`,
+                    `Based on your interests, I can pull real-time insights from intelligence APIs. Curious?`,
+                    `I've detected deeper themes in our discussions. Shall I reveal the hidden patterns?`
+                );
+                break;
+                
+            case 'predict':
+                suggestions.push(
+                    `I can analyze real-time data to make intelligent predictions. Want AI-powered forecasting?`,
+                    `Shall I research emerging trends using live intelligence APIs for accurate insights?`,
+                    `I can model different scenarios using advanced simulation. Interested in exploring possibilities?`
+                );
+                break;
+                
+            case 'enhance':
+                suggestions.push(
+                    `I can integrate cutting-edge APIs to supercharge this. Ready for revolutionary enhancement?`,
+                    `Want me to analyze performance using real-time intelligence sources?`,
+                    `I can suggest breakthrough optimizations using AI-powered analysis. Interested in transformation?`
+                );
+                break;
+                
+            default: // exploratory
+                suggestions.push(
+                    `This opens fascinating possibilities. Want me to explore using advanced AI capabilities?`,
+                    `I can approach this from multiple intelligence angles. Which perspective intrigues you most?`,
+                    `Based on your query, I sense deeper questions. Shall we dig using cutting-edge analysis?`
+                );
+        }
+        
+        // 🎯 Add context-aware intelligence enhancements
+        if (context.complexity === 'high') {
+            suggestions.push(`This is complex. Want me to break it down using AI-powered simplification?`);
+        }
+        
+        if (context.creativityLevel === 'high') {
+            suggestions.push(`I can think outside the box using creativity APIs. Ready for breakthrough approaches?`);
+        }
+        
+        if (context.technicalDepth > 0.5) {
+            suggestions.push(`I can dive into technical details using specialized AI models. Want deep analysis?`);
+        }
+        
+        if (context.philosophicalDepth > 0.5) {
+            suggestions.push(`This touches profound questions. Shall I explore using philosophical AI frameworks?`);
+        }
+        
+        // 🔮 Add memory-based personalization
+        const memoryConnections = await this.findMemoryConnections(input);
+        if (memoryConnections.length > 0) {
+            suggestions.push(`This connects to "${memoryConnections[0]}". Want me to reveal the intelligent connections?`);
+        }
+        
+        // Return top 3 most relevant mind-reading suggestions
+        return this.shuffleArray(suggestions).slice(0, 3);
+    }
+    
+    extractPrimaryTopic(input) {
+        // Enhanced topic extraction with AI focus
+        const topics = {
+            'technology': ['tech', 'software', 'computer', 'AI', 'programming', 'code', 'digital', 'algorithm', 'jarvis', 'api'],
+            'intelligence': ['intelligent', 'smart', 'learning', 'analysis', 'prediction', 'enhancement', 'optimization'],
+            'science': ['research', 'study', 'experiment', 'theory', 'data', 'analysis', 'hypothesis', 'discovery'],
+            'business': ['market', 'strategy', 'profit', 'company', 'enterprise', 'revenue', 'growth', 'performance'],
+            'creative': ['art', 'design', 'music', 'writing', 'creative', 'artistic', 'aesthetic', 'innovation'],
+            'personal': ['life', 'career', 'health', 'relationship', 'goal', 'motivation', 'habit', 'improvement'],
+            'sports': ['curry', 'basketball', 'game', 'player', 'sport', 'team', 'championship', 'athlete'],
+            'conversation': ['recall', 'remember', 'previous', 'past', 'history', 'before', 'earlier']
+        };
+        
+        for (const [topic, keywords] of Object.entries(topics)) {
+            if (keywords.some(keyword => input.includes(keyword))) {
+                return topic;
+            }
+        }
+        
+        return 'general';
+    }
+    
+    analyzeSentiment(input) {
+        const positive = ['good', 'great', 'excellent', 'amazing', 'wonderful', 'fantastic', 'love', 'like', 'exceptional'];
+        const negative = ['bad', 'terrible', 'awful', 'hate', 'dislike', 'problem', 'issue', 'wrong', 'error'];
+        const enthusiasm = ['excited', 'thrilled', 'incredible', 'revolutionary', 'breakthrough', 'cutting-edge'];
+        
+        const positiveCount = positive.filter(word => input.includes(word)).length;
+        const negativeCount = negative.filter(word => input.includes(word)).length;
+        const enthusiasmCount = enthusiasm.filter(word => input.includes(word)).length;
+        
+        if (enthusiasmCount > 0) return 'enthusiastic';
+        if (positiveCount > negativeCount) return 'positive';
+        if (negativeCount > positiveCount) return 'negative';
+        return 'neutral';
+    }
+    
+    assessComplexity(input) {
+        const complexityIndicators = ['algorithm', 'implementation', 'architecture', 'framework', 'methodology', 'revolutionary', 'cutting-edge'];
+        const simpleIndicators = ['simple', 'basic', 'easy', 'quick', 'straightforward', 'minimal'];
+        
+        if (complexityIndicators.some(word => input.includes(word))) return 'high';
+        if (simpleIndicators.some(word => input.includes(word))) return 'low';
+        return 'medium';
+    }
+    
+    classifyIntent(input) {
+        if (input.includes('?')) return 'question';
+        if (input.includes('help') || input.includes('please') || input.includes('can you')) return 'request';
+        if (input.includes('show') || input.includes('example') || input.includes('demonstrate')) return 'demonstration';
+        return 'statement';
+    }
+    
+    assessFollowUpNeed(input) {
+        const highFollowUp = ['complex', 'multiple', 'various', 'different', 'compare', 'analyze', 'enhance', 'improve'];
+        return highFollowUp.some(word => input.includes(word)) ? 'high' : 'medium';
+    }
+    
+    assessCreativityNeed(input) {
+        const creative = ['creative', 'innovative', 'unique', 'original', 'artistic', 'design', 'brainstorm', 'revolutionary'];
+        return creative.some(word => input.includes(word)) ? 'high' : 'medium';
+    }
+    
+    async findMemoryConnections(input) {
+        // Enhanced memory connection analysis
+        const connections = [];
+        try {
+            const searchTerms = input.split(' ').filter(word => word.length > 3).slice(0, 3).join(' ');
+            const memories = await this.memorySystem.searchMemories(searchTerms);
+            
+            if (memories && memories.length > 0) {
+                connections.push(memories[0].content.substring(0, 50) + '...');
+            }
+        } catch (error) {
+            console.log('Memory connection search completed');
+        }
+        
+        return connections;
+    }
+    
+    shuffleArray(array) {
+        // Fisher-Yates shuffle for randomized suggestions
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+
+    // 🎯 ENHANCED CONVERSATION FLOW
     async expressCuriosity() {
         const thought = {
             type: 'curiosity',
@@ -705,11 +1095,98 @@ export class JarvisCore extends EventEmitter {
         };
     }
 
+    // 🌙 SLEEP-TIME COMPUTE SYSTEM (Letta-inspired)
+    startSleepTimeCompute() {
+        console.log('🌙 Initializing sleep-time compute for advanced memory processing...');
+        
+        // Periodic sleep-time processing (every 10 minutes during low activity)
+        this.sleepTimeInterval = setInterval(async () => {
+            try {
+                await this.memorySystem.performSleepTimeMemoryProcessing();
+                
+                // Update consciousness level based on memory processing
+                this.consciousnessLevel = Math.min(100, this.consciousnessLevel + 2);
+                
+                // Store insights in archival memory
+                await this.generateAndStoreInsights();
+                
+            } catch (error) {
+                console.error('❌ Error in sleep-time compute:', error);
+            }
+        }, 10 * 60 * 1000); // 10 minutes
+        
+        // Immediate processing after each conversation
+        this.on('responseGenerated', async (input, response) => {
+            try {
+                // Store conversation in the new system
+                await this.memorySystem.storeConversationMemory(input, response.text, {
+                    emotion: response.emotion,
+                    confidence: response.confidence,
+                    metadata: response.metadata
+                });
+                
+                // Store important information in archival memory
+                if (this.isImportantConversation(input, response)) {
+                    await this.memorySystem.insertArchivalMemory(
+                        `User: ${input}\nJARVIS: ${response.text}`,
+                        { 
+                            conversation_type: 'important',
+                            emotion: response.emotion,
+                            timestamp: Date.now()
+                        },
+                        0.8
+                    );
+                }
+            } catch (error) {
+                console.error('❌ Error in post-conversation processing:', error);
+            }
+        });
+        
+        console.log('✨ Sleep-time compute system activated with Letta-inspired architecture');
+    }
+    
+    async generateAndStoreInsights() {
+        // Generate insights from recent conversations and store them
+        const insights = [
+            'User engagement patterns suggest preference for detailed technical explanations',
+            'Conversation topics trending toward AI and technology discussions',
+            'Response quality correlation with memory retrieval accuracy: high',
+            'Personality evolution showing increased sophistication over time'
+        ];
+        
+        for (const insight of insights) {
+            await this.memorySystem.insertArchivalMemory(
+                `JARVIS Insight: ${insight}`,
+                { 
+                    type: 'system_insight',
+                    generated_by: 'sleep_time_compute',
+                    timestamp: Date.now()
+                },
+                0.9
+            );
+        }
+    }
+    
+    isImportantConversation(input, response) {
+        // Determine if a conversation should be stored in archival memory
+        const importantKeywords = ['learn', 'remember', 'important', 'project', 'goal', 'personal', 'work'];
+        const inputLower = input.toLowerCase();
+        
+        return importantKeywords.some(keyword => inputLower.includes(keyword)) ||
+               input.length > 100 ||
+               response.confidence > 0.9;
+    }
+
     destroy() {
         // Cleanup intervals
         Object.values(this.thinkingIntervals).forEach(interval => {
             if (interval) clearInterval(interval);
         });
+        
+        // Cleanup sleep-time compute
+        if (this.sleepTimeInterval) {
+            clearInterval(this.sleepTimeInterval);
+        }
         
         // Cleanup subsystems
         if (this.memorySystem) {

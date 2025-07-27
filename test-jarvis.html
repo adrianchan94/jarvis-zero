@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS Memory Test</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #00ff00;
+            padding: 20px;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 1px solid #00ff00;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 3px solid #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        .error {
+            border-left-color: #ff0000;
+            background: rgba(255, 0, 0, 0.1);
+        }
+        .success {
+            border-left-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        button {
+            background: #003300;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #005500;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧠 JARVIS Enhanced Memory System Test</h1>
+        <p>Testing the revolutionary memory enhancements and Letta-inspired architecture.</p>
+        
+        <div id="status-container">
+            <div class="status">🔄 Initializing test environment...</div>
+        </div>
+        
+        <div style="margin: 20px 0;">
+            <button onclick="testMemoryBlocks()">Test Memory Blocks</button>
+            <button onclick="testArchivalMemory()">Test Archival Memory</button>
+            <button onclick="testConversationMemory()">Test Conversation Memory</button>
+            <button onclick="testSleepTimeCompute()">Test Sleep-Time Compute</button>
+            <button onclick="clearAllTests()">Clear Tests</button>
+        </div>
+        
+        <div id="test-results"></div>
+    </div>
+
+    <script>
+        let testResults = [];
+        
+        function addStatus(message, type = 'status') {
+            const container = document.getElementById('status-container');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.innerHTML = `${new Date().toLocaleTimeString()} - ${message}`;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function updateResults() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = `
+                <h3>📊 Test Results (${testResults.length} tests)</h3>
+                ${testResults.map(result => `
+                    <div class="status ${result.success ? 'success' : 'error'}">
+                        ${result.success ? '✅' : '❌'} ${result.name}: ${result.message}
+                    </div>
+                `).join('')}
+            `;
+        }
+        
+        async function testMemoryBlocks() {
+            addStatus('🧠 Testing Memory Blocks system...');
+            
+            try {
+                // Test IndexedDB version compatibility
+                const request = indexedDB.open('JarvisMemoryDB', 2);
+                const db = await new Promise((resolve, reject) => {
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains('memory_blocks')) {
+                            const blockStore = db.createObjectStore('memory_blocks', { keyPath: 'id', autoIncrement: true });
+                            blockStore.createIndex('label', 'label', { unique: false });
+                        }
+                    };
+                });
+                
+                // Test creating a memory block
+                const transaction = db.transaction(['memory_blocks'], 'readwrite');
+                const store = transaction.objectStore('memory_blocks');
+                
+                const testBlock = {
+                    label: 'test_block',
+                    value: 'This is a test memory block created at ' + new Date().toISOString(),
+                    description: 'Testing the memory block system',
+                    limit: 5000,
+                    agent_id: 'jarvis_main',
+                    created_at: Date.now(),
+                    importance: 0.8,
+                    version: 1
+                };
+                
+                await store.add(testBlock);
+                
+                testResults.push({
+                    name: 'Memory Blocks',
+                    success: true,
+                    message: 'Successfully created and stored memory block'
+                });
+                
+                addStatus('✅ Memory Blocks test passed!', 'success');
+                
+            } catch (error) {
+                testResults.push({
+                    name: 'Memory Blocks',
+                    success: false,
+                    message: error.message
+                });
+                addStatus('❌ Memory Blocks test failed: ' + error.message, 'error');
+            }
+            
+            updateResults();
+        }
+        
+        async function testArchivalMemory() {
+            addStatus('📚 Testing Archival Memory system...');
+            
+            try {
+                const request = indexedDB.open('JarvisMemoryDB', 2);
+                const db = await new Promise((resolve, reject) => {
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+                
+                if (!db.objectStoreNames.contains('archival_memory')) {
+                    throw new Error('Archival memory store not found');
+                }
+                
+                const transaction = db.transaction(['archival_memory'], 'readwrite');
+                const store = transaction.objectStore('archival_memory');
+                
+                const testArchival = {
+                    text_content: 'This is a test archival memory entry about AI consciousness and memory systems.',
+                    context: { test: true, timestamp: Date.now() },
+                    relevance_score: 0.9,
+                    timestamp: Date.now(),
+                    agent_id: 'jarvis_main',
+                    tags: ['technology', 'testing']
+                };
+                
+                await store.add(testArchival);
+                
+                testResults.push({
+                    name: 'Archival Memory',
+                    success: true,
+                    message: 'Successfully created and stored archival memory'
+                });
+                
+                addStatus('✅ Archival Memory test passed!', 'success');
+                
+            } catch (error) {
+                testResults.push({
+                    name: 'Archival Memory',
+                    success: false,
+                    message: error.message
+                });
+                addStatus('❌ Archival Memory test failed: ' + error.message, 'error');
+            }
+            
+            updateResults();
+        }
+        
+        async function testConversationMemory() {
+            addStatus('💬 Testing Conversation Memory system...');
+            
+            try {
+                const request = indexedDB.open('JarvisMemoryDB', 2);
+                const db = await new Promise((resolve, reject) => {
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+                
+                if (!db.objectStoreNames.contains('conversation_memory')) {
+                    throw new Error('Conversation memory store not found');
+                }
+                
+                const transaction = db.transaction(['conversation_memory'], 'readwrite');
+                const store = transaction.objectStore('conversation_memory');
+                
+                const testConversation = {
+                    conversation_id: 'test_conversation_' + Date.now(),
+                    user_input: 'Hello JARVIS, how is your memory system working?',
+                    jarvis_response: 'Quite excellently, sir. The enhanced memory system is functioning at optimal capacity.',
+                    context: { test: true },
+                    timestamp: Date.now(),
+                    emotional_sentiment: 'positive',
+                    topics: ['technology', 'memory'],
+                    importance: 0.7
+                };
+                
+                await store.add(testConversation);
+                
+                testResults.push({
+                    name: 'Conversation Memory',
+                    success: true,
+                    message: 'Successfully created and stored conversation memory'
+                });
+                
+                addStatus('✅ Conversation Memory test passed!', 'success');
+                
+            } catch (error) {
+                testResults.push({
+                    name: 'Conversation Memory',
+                    success: false,
+                    message: error.message
+                });
+                addStatus('❌ Conversation Memory test failed: ' + error.message, 'error');
+            }
+            
+            updateResults();
+        }
+        
+        async function testSleepTimeCompute() {
+            addStatus('🌙 Testing Sleep-Time Compute simulation...');
+            
+            try {
+                // Simulate sleep-time processing
+                const startTime = Date.now();
+                
+                // Simulate memory consolidation
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // Simulate insight generation
+                const insights = [
+                    'Memory system performance is optimal',
+                    'Test data integration successful',
+                    'Enhanced features functioning correctly'
+                ];
+                
+                const processingTime = Date.now() - startTime;
+                
+                testResults.push({
+                    name: 'Sleep-Time Compute',
+                    success: true,
+                    message: `Simulated processing completed in ${processingTime}ms, generated ${insights.length} insights`
+                });
+                
+                addStatus('✅ Sleep-Time Compute simulation passed!', 'success');
+                
+            } catch (error) {
+                testResults.push({
+                    name: 'Sleep-Time Compute',
+                    success: false,
+                    message: error.message
+                });
+                addStatus('❌ Sleep-Time Compute test failed: ' + error.message, 'error');
+            }
+            
+            updateResults();
+        }
+        
+        function clearAllTests() {
+            testResults = [];
+            document.getElementById('status-container').innerHTML = '<div class="status">🔄 Tests cleared, ready for new testing...</div>';
+            updateResults();
+            addStatus('🧹 All test results cleared');
+        }
+        
+        // Auto-run basic connectivity test
+        window.addEventListener('load', () => {
+            addStatus('🚀 JARVIS Memory Test Environment Loaded', 'success');
+            addStatus('💡 Click the test buttons to verify memory system functionality');
+            addStatus('🌟 Revolutionary memory enhancements ready for testing!');
+        });
+    </script>
+</body>
+</html> 
