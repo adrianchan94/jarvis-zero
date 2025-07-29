@@ -298,9 +298,7 @@ export class JarvisCore extends EventEmitter {
         // Track interaction time for proactive behavior
         this.memorySystem.lastInteractionTime = Date.now();
         
-        // Generate conversation suggestions (for future UI integration)
-        const suggestions = await this.generateConversationSuggestions(input);
-        console.log('💡 Conversation suggestions generated:', suggestions);
+        // Removed suggestion system to preserve tokens for main response
         
         // Create experience record with conversation continuity
         const experience = {
@@ -308,8 +306,7 @@ export class JarvisCore extends EventEmitter {
             input: input,
             context: this.getCurrentContext(),
             emotionalState: { ...this.personalitySystem.emotionalState },
-            conversationId: this.memorySystem.currentConversationId || this.memorySystem.initializeConversationThread(),
-            suggestions: suggestions
+            conversationId: this.memorySystem.currentConversationId || this.memorySystem.initializeConversationThread()
         };
         
         // Process through cognitive systems asynchronously
@@ -324,8 +321,7 @@ export class JarvisCore extends EventEmitter {
             // Update metrics
             this.metrics.totalInteractions++;
             
-            // Emit response with suggestions
-            response.suggestions = suggestions;
+                    // Response now has full token allocation for main content
             this.emit('response', response);
         }).catch(error => {
             console.error('❌ Error processing input:', error);
@@ -375,6 +371,7 @@ export class JarvisCore extends EventEmitter {
             // Enhance context with memory connections and conversation history
             const enhancedContext = {
                 ...uniqueResponseContext,
+                recentMemories: evolutionaryContext.recentMemories, // 🧠 CRITICAL FIX: Pass memories to LLM
                 memoryConnections: memoryConnections,
                 conversationHistory: conversationHistory,
                 memorySystem: this.memorySystem,
@@ -452,6 +449,12 @@ export class JarvisCore extends EventEmitter {
         const personalityProfile = this.personalitySystem.buildPersonalityProfile();
         const recentMemories = this.memorySystem.getRelevantMemories(input);
         const conversationFlow = this.memorySystem.getConversationalHistory() || [];
+        
+        console.log('🧠 Building context for input:', input);
+        console.log('💭 Found', recentMemories.length, 'relevant memories');
+        if (recentMemories.length > 0) {
+            console.log('🎯 Top memory relevance:', recentMemories[0].relevance);
+        }
         
         return {
             // Enhanced consciousness data
@@ -681,7 +684,7 @@ export class JarvisCore extends EventEmitter {
             intensity: 0.3
         };
         
-        // Generate contextual proactive suggestions
+        // Generate contextual proactive assistance
         const proactiveInteraction = await this.generateProactiveInteraction();
         
         if (proactiveInteraction) {
@@ -714,7 +717,7 @@ export class JarvisCore extends EventEmitter {
             speak: false, // Don't speak proactive messages automatically
             metadata: {
                 proactive: true,
-                suggestionType: 'contextual_assistance'
+                assistanceType: 'contextual'
             }
         };
     }
@@ -776,22 +779,7 @@ export class JarvisCore extends EventEmitter {
         return messages;
     }
 
-    // 🧠 REVOLUTIONARY MIND-READING SUGGESTION SYSTEM
-    async generateConversationSuggestions(userInput) {
-        // 🔮 USE AI-GENERATED CONTEXTUAL SUGGESTIONS IF AVAILABLE
-        if (this.llmManager && this.llmManager.lastGeneratedSuggestions && this.llmManager.lastGeneratedSuggestions.length > 0) {
-            console.log('🎯 Using AI-generated contextual suggestions');
-            return this.llmManager.lastGeneratedSuggestions;
-        }
-        
-        // 🧠 FALLBACK TO INTELLIGENT ANALYSIS
-        const contextAnalysis = await this.analyzeInputContext(userInput);
-        const userIntent = await this.predictUserIntent(userInput, contextAnalysis);
-        const adaptiveSuggestions = await this.generateAdaptiveSuggestions(userInput, userIntent, contextAnalysis);
-        
-        console.log('🔮 Mind-reading analysis:', { contextAnalysis, userIntent });
-        return adaptiveSuggestions;
-    }
+
     
     async analyzeInputContext(input) {
         const inputLower = input.toLowerCase();
@@ -826,7 +814,7 @@ export class JarvisCore extends EventEmitter {
             analyze: ['analyze', 'compare', 'evaluate', 'assess', 'review', 'examine', 'performance'],
             
             // 🤔 BRAINSTORMING
-            brainstorm: ['ideas', 'suggestions', 'alternatives', 'options', 'possibilities', 'think'],
+            brainstorm: ['ideas', 'brainstorm', 'alternatives', 'options', 'possibilities', 'think'],
             
             // 💭 CONVERSATIONAL
             chat: ['hi', 'hello', 'good morning', 'how are you', 'what do you think', 'recall', 'remember'],
@@ -846,111 +834,7 @@ export class JarvisCore extends EventEmitter {
         
         return 'exploratory';
     }
-    
-    async generateAdaptiveSuggestions(input, intent, context) {
-        // 🧠 MIND-READING ADAPTIVE SUGGESTIONS
-        const suggestions = [];
-        
-        // Base suggestions on user intent and context
-        switch (intent) {
-            case 'info':
-            suggestions.push(
-                    `Want me to dive deeper into ${context.topic}? I can provide real-time analysis with cutting-edge APIs.`,
-                    `I can cross-reference this with live data from multiple intelligence sources. Shall I?`,
-                    `Would you like me to explain this using visual data or interactive examples?`
-                );
-                break;
-                
-            case 'solve':
-            suggestions.push(
-                    `I can break this down using advanced problem-solving frameworks. Ready for systematic approach?`,
-                    `Let me analyze this with AI-powered diagnostic tools. Want multi-dimensional solutions?`,
-                    `I can suggest cutting-edge methodologies for this challenge. Interested in innovation?`
-                );
-                break;
-                
-            case 'create':
-            suggestions.push(
-                    `I can help brainstorm using AI creativity APIs. Want me to generate unique variations?`,
-                    `Shall I research latest trends using real-time data to inspire your creation?`,
-                    `I can provide AI-generated templates and frameworks. Ready for intelligent assistance?`
-                );
-                break;
-                
-            case 'analyze':
-            suggestions.push(
-                    `I can perform multi-dimensional analysis using advanced AI APIs. Want comprehensive insights?`,
-                    `Shall I gather real-time data to strengthen this analysis with live intelligence?`,
-                    `I can visualize these insights using AI-powered data visualization. Which format helps most?`
-                );
-                break;
-                
-            case 'brainstorm':
-                suggestions.push(
-                    `I can generate breakthrough ideas using lateral thinking APIs. Ready to explore the impossible?`,
-                    `Want me to analyze global trends to inspire revolutionary perspectives?`,
-                    `I can combine concepts from different fields using AI synthesis. Interested in cross-pollination?`
-                );
-                break;
-                
-            case 'chat':
-                suggestions.push(
-                    `I've been analyzing our conversation patterns. Want to explore fascinating connections I've discovered?`,
-                    `Based on your interests, I can pull real-time insights from intelligence APIs. Curious?`,
-                    `I've detected deeper themes in our discussions. Shall I reveal the hidden patterns?`
-                );
-                break;
-                
-            case 'predict':
-                suggestions.push(
-                    `I can analyze real-time data to make intelligent predictions. Want AI-powered forecasting?`,
-                    `Shall I research emerging trends using live intelligence APIs for accurate insights?`,
-                    `I can model different scenarios using advanced simulation. Interested in exploring possibilities?`
-                );
-                break;
-                
-            case 'enhance':
-                suggestions.push(
-                    `I can integrate cutting-edge APIs to supercharge this. Ready for revolutionary enhancement?`,
-                    `Want me to analyze performance using real-time intelligence sources?`,
-                    `I can suggest breakthrough optimizations using AI-powered analysis. Interested in transformation?`
-                );
-                break;
-                
-            default: // exploratory
-                suggestions.push(
-                    `This opens fascinating possibilities. Want me to explore using advanced AI capabilities?`,
-                    `I can approach this from multiple intelligence angles. Which perspective intrigues you most?`,
-                    `Based on your query, I sense deeper questions. Shall we dig using cutting-edge analysis?`
-                );
-        }
-        
-        // 🎯 Add context-aware intelligence enhancements
-        if (context.complexity === 'high') {
-            suggestions.push(`This is complex. Want me to break it down using AI-powered simplification?`);
-        }
-        
-        if (context.creativityLevel === 'high') {
-            suggestions.push(`I can think outside the box using creativity APIs. Ready for breakthrough approaches?`);
-        }
-        
-        if (context.technicalDepth > 0.5) {
-            suggestions.push(`I can dive into technical details using specialized AI models. Want deep analysis?`);
-        }
-        
-        if (context.philosophicalDepth > 0.5) {
-            suggestions.push(`This touches profound questions. Shall I explore using philosophical AI frameworks?`);
-        }
-        
-        // 🔮 Add memory-based personalization
-        const memoryConnections = await this.findMemoryConnections(input);
-        if (memoryConnections.length > 0) {
-            suggestions.push(`This connects to "${memoryConnections[0]}". Want me to reveal the intelligent connections?`);
-        }
-        
-        // Return top 3 most relevant mind-reading suggestions
-        return this.shuffleArray(suggestions).slice(0, 3);
-    }
+
     
     extractPrimaryTopic(input) {
         // Enhanced topic extraction with AI focus
@@ -1033,7 +917,7 @@ export class JarvisCore extends EventEmitter {
     }
     
     shuffleArray(array) {
-        // Fisher-Yates shuffle for randomized suggestions
+        // Fisher-Yates shuffle for randomized arrays
         const shuffled = [...array];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));

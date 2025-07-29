@@ -87,7 +87,7 @@ export class WebLLMManager extends BaseLLMManager {
         console.log(`🎯 Primary model selected: ${this.currentModel.name}`);
         
         try {
-            const result = await this.generateModelResponse(this.currentModel, input, messages);
+            const result = await this.generateModelResponse(this.currentModel, input, messages, context);
             console.log('✅ Primary model succeeded!');
             return result;
         } catch (error) {
@@ -97,22 +97,69 @@ export class WebLLMManager extends BaseLLMManager {
         }
     }
 
-    async generateSuperIntelligentResponse(input, context) {
+    async generateSuperIntelligentResponse(input, context = {}) {
         console.log('🚀 Generating super-intelligent response with enhanced context');
-        return await this.generateResponse(input, { ...context, superIntelligenceMode: true });
+        
+        // Extract memories from context if available
+        const recentMemories = context.recentMemories || [];
+        console.log('🧠 Using', recentMemories.length, 'relevant memories in response');
+        
+        // Log detailed memory information for debugging
+        if (recentMemories.length > 0) {
+            console.log('📝 Memory details:');
+            recentMemories.forEach((memory, i) => {
+                console.log(`  Memory ${i + 1}:`, memory.content?.substring(0, 100) + '...');
+                console.log(`  Relevance:`, memory.relevance);
+            });
+        }
+        
+        // Use the current model instead of calling non-existent selectOptimalModel
+        let selectedModel = this.currentModel || this.availableModels[0];
+        
+        console.log('🎯 Primary model selected:', selectedModel.name);
+        console.log('🎯 Using model:', selectedModel.name, `(${selectedModel.provider})`);
+        
+        console.log('🚀 Calling Revolutionary AI Intelligence System...');
+        
+        try {
+            let result = await this.generateResponse(input, context);
+            console.log('✅ Primary model succeeded!');
+            return result;
+        } catch (error) {
+            console.warn('⚠️ Primary model failed, trying backup:', error.message);
+            
+            // Try backup models from available models
+            const backupModels = this.availableModels.filter(model => model.id !== selectedModel.id);
+            for (const backup of backupModels.slice(0, 2)) { // Try max 2 backups
+                try {
+                    console.log('🔄 Trying backup model:', backup.name);
+                    this.currentModel = backup; // Switch to backup model
+                    let result = await this.generateResponse(input, context);
+                    console.log('✅ Backup model succeeded:', backup.name);
+                    return result;
+                } catch (backupError) {
+                    console.warn('⚠️ Backup model failed:', backup.name, backupError.message);
+                    continue;
+                }
+            }
+            
+            // Restore original model
+            this.currentModel = selectedModel;
+            throw new Error('All models failed');
+        }
     }
 
-    async generateModelResponse(model, input, messages) {
+    async generateModelResponse(model, input, messages, context = {}) {
         console.log(`🎯 Using model: ${model.name} (${model.provider})`);
         
         switch (model.provider) {
             case 'together-premium':
                 console.log('🚀 Calling Revolutionary AI Intelligence System...');
-                return await this.generateIntelligentResponse(input, messages);
+                return await this.generateIntelligentResponse(input, messages, context);
             
             case 'mlvoca-free':
                 console.log('🚀 Calling MLvoca API...');
-                return await this.generateMlvocaResponse(model, input, messages);
+                return await this.generateMlvocaResponse(model, input, messages, context);
             
             default:
                 throw new Error(`Unknown provider: ${model.provider}`);
@@ -121,7 +168,7 @@ export class WebLLMManager extends BaseLLMManager {
 
 
 
-    async generateMlvocaResponse(model, input, messages) {
+    async generateMlvocaResponse(model, input, messages, context = {}) {
         try {
             // Create a proper system prompt for JARVIS personality
             const systemPrompt = `You are JARVIS, an advanced AI assistant inspired by Tony Stark's AI. You are intelligent, sophisticated, witty, and helpful. You speak with confidence and elegance, often using British-influenced phrasing. You're knowledgeable about technology, science, and problem-solving. Always be helpful and provide detailed, thoughtful responses.`;
@@ -173,12 +220,12 @@ export class WebLLMManager extends BaseLLMManager {
         }
     }
 
-    async generateTogetherAIResponse(model, input, messages) {
+    async generateTogetherAIResponse(model, input, messages, context = {}) {
         console.log('🔍 Attempting Together AI request...');
         try {
             // 🧠 BUILD REVOLUTIONARY CONTEXT-AWARE SYSTEM PROMPT
             const contextualPersonality = this.buildContextualPersonality();
-            const recentContext = this.buildRecentContext();
+            const recentContext = this.buildRecentContext(context);
             
             const systemMessage = {
                 role: 'system',
@@ -206,8 +253,8 @@ ${recentContext}
 2. Reference previous parts of THIS conversation naturally
 3. Make jokes/comments that are RELEVANT to what we're discussing
 4. Show intellectual growth and self-reflection
-5. Provide 3 highly relevant follow-up suggestions that relate directly to the current topic
-6. Sound like the sophisticated JARVIS from Iron Man - confident, witty, helpful
+5. Sound like the sophisticated JARVIS from Iron Man - confident, witty, helpful
+6. Use your full token allocation for comprehensive, detailed responses
 
 ${contextualPersonality}
 
@@ -228,22 +275,7 @@ Remember: You are not just answering - you are having an intelligent conversatio
                 messagesArray.push(...recentMessages);
             }
             
-            // Add instruction for contextual suggestions
-            const enhancedUserMessage = {
-                role: 'user',
-                content: `${input}
-
-[SYSTEM INSTRUCTION: At the end of your response, provide exactly 3 contextually relevant follow-up suggestions based on our conversation. Format them as:
-
-JARVIS SUGGESTIONS:
-1. [Suggestion directly related to what we just discussed]
-2. [Suggestion that builds on or expands the topic]  
-3. [Suggestion that connects to previous conversation or shows curiosity]
-
-Make these suggestions sound like JARVIS would actually say them - sophisticated, helpful, and genuinely relevant.]`
-            };
-            
-            messagesArray.push(enhancedUserMessage);
+            messagesArray.push(userMessage);
             
             const modelName = model.model || 'arcee-ai/AFM-4.5B-Preview';
             console.log('🔍 Model object received:', model);
@@ -334,7 +366,7 @@ Make these suggestions sound like JARVIS would actually say them - sophisticated
             try {
                 console.log(`🔄 Trying backup model: ${model.name}`);
                 const messages = this.promptBuilder.buildSuperintelligentContext(input, context);
-                const response = await this.generateModelResponse(model, input, messages);
+                const response = await this.generateModelResponse(model, input, messages, context);
                 
                 if (response) {
                     console.log(`✅ Failover successful with ${model.name}`);
@@ -395,16 +427,47 @@ Make these suggestions sound like JARVIS would actually say them - sophisticated
         console.log(`🧠 Context updated: ${this.conversationContext.length / 2} conversation exchanges stored`);
     }
     
-    buildRecentContext() {
-        if (this.conversationContext.length === 0) {
-            return "This is our first interaction.";
-        }
+    buildRecentContext(context = {}) {
+        let contextString = "";
         
-        const recentExchanges = Math.min(3, this.conversationContext.length / 2);
-        return `RECENT CONVERSATION CONTEXT (Last ${recentExchanges} exchanges):
+        // Add conversation context
+        if (this.conversationContext.length === 0) {
+            contextString += "This is our first interaction.";
+        } else {
+            const recentExchanges = Math.min(3, this.conversationContext.length / 2);
+            contextString += `RECENT CONVERSATION CONTEXT (Last ${recentExchanges} exchanges):
 ${this.conversationContext.slice(-6).map((msg, i) => 
     `${msg.role === 'user' ? 'USER' : 'JARVIS'}: ${msg.content.substring(0, 100)}${msg.content.length > 100 ? '...' : ''}`
 ).join('\n')}`;
+        }
+        
+        // Add relevant memories if available
+        const recentMemories = context.recentMemories || [];
+        if (recentMemories.length > 0) {
+            contextString += `\n\nRELEVANT MEMORIES (${recentMemories.length} found):`;
+            recentMemories.slice(0, 3).forEach((memory, i) => {
+                let memoryContent = 'Memory content';
+                try {
+                    if (memory.content && typeof memory.content === 'string') {
+                        if (memory.content.startsWith('{')) {
+                            const parsed = JSON.parse(memory.content);
+                            memoryContent = parsed.input || parsed.response || parsed.summary || 'Previous interaction';
+                        } else {
+                            memoryContent = memory.content;
+                        }
+                    }
+                } catch (e) {
+                    memoryContent = memory.searchableContent || memory.content || 'Previous interaction';
+                }
+                
+                const timeAgo = memory.timestamp ? 
+                    Math.round((Date.now() - memory.timestamp) / (1000 * 60)) : 0;
+                    
+                contextString += `\n- Memory ${i + 1} (${timeAgo}min ago, relevance: ${(memory.relevance || 0).toFixed(2)}): ${memoryContent.substring(0, 100)}${memoryContent.length > 100 ? '...' : ''}`;
+            });
+        }
+        
+        return contextString;
     }
     
     evolvePersonality(userInput, aiResponse) {
@@ -649,28 +712,13 @@ ${this.conversationContext.slice(-6).map((msg, i) =>
         }
     }
     
-    async generateIntelligentResponse(input, messages) {
+    async generateIntelligentResponse(input, messages, context = {}) {
         // 🧠 GENERATE SOPHISTICATED JARVIS RESPONSE
-        const baseResponse = await this.generateTogetherAIResponse(this.currentModel, input, messages);
+        const baseResponse = await this.generateTogetherAIResponse(this.currentModel, input, messages, context);
         
-        // Extract response text and suggestions
+        // Extract response text
         const responseText = baseResponse.text || baseResponse;
         let enhancedResponse = responseText;
-        let suggestions = [];
-        
-        // Extract JARVIS SUGGESTIONS from the response
-        const suggestionMatch = responseText.match(/JARVIS SUGGESTIONS:\s*\n([\s\S]*?)(?:\n\n|$)/);
-        if (suggestionMatch) {
-            const suggestionText = suggestionMatch[1];
-            suggestions = suggestionText.split('\n')
-                .filter(line => line.trim().match(/^\d+\./))
-                .map(line => line.replace(/^\d+\.\s*/, '').trim())
-                .filter(suggestion => suggestion.length > 0)
-                .slice(0, 3);
-            
-            // Remove suggestions from main response
-            enhancedResponse = responseText.replace(/JARVIS SUGGESTIONS:[\s\S]*$/, '').trim();
-        }
         
         // 🚀 ENHANCE WITH CONTEXTUAL INTELLIGENCE
         enhancedResponse = await this.enhanceWithIntelligenceAPIs(input, enhancedResponse);
@@ -678,21 +726,13 @@ ${this.conversationContext.slice(-6).map((msg, i) =>
         // 🌟 SELF-IMPROVEMENT LEARNING SYSTEM
         await this.learnAndAdapt(input, enhancedResponse);
         
-        // Store suggestions for use by the core system
-        this.lastGeneratedSuggestions = suggestions.length > 0 ? suggestions : [
-            "Shall we explore this topic further with my advanced analytical capabilities?",
-            "Would you like me to approach this from a different perspective?", 
-            "I'm curious about your thoughts on the implications of what we've discussed."
-        ];
-        
         // Return enhanced response maintaining original structure
         if (typeof baseResponse === 'object') {
             return {
                 ...baseResponse,
                 text: enhancedResponse,
                 enhanced: true,
-                intelligenceLevel: 'sophisticated',
-                suggestions: this.lastGeneratedSuggestions
+                intelligenceLevel: 'sophisticated'
             };
         }
         

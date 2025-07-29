@@ -17,24 +17,7 @@ export const availableModels = [
         realLLM: true,
         free: true
     },
-    
-    // BACKUP: Meta Llama 3.3 70B - Completely FREE on Together AI
-    { 
-        id: 'together-llama-70b-free', 
-        name: 'Meta Llama 3.3 70B (COMPLETELY FREE)', 
-        provider: 'together-premium', 
-        contextLength: 131072, 
-        cost: 0, 
-        isLocal: false, 
-        priority: 2,
-        description: 'Meta Llama 3.3 70B - Completely FREE on Together AI with no rate limits',
-        endpoint: 'https://api.together.xyz/v1/chat/completions',
-        model: 'meta-llama/Llama-3.3-70B-Instruct-Turbo-Free',
-        requiresKey: true,
-        unlimited: true,
-        realLLM: true,
-        free: true
-    },
+
     
     // BACKUP: DeepSeek R1 Distill - Also FREE
     { 

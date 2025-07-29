@@ -423,7 +423,12 @@ export class JarvisPersonalitySystem extends EventEmitter {
     
     applySophisticatedKnowledge(response, knowledgeQueries) {
         // Add technical confidence for technical topics
-        if (knowledgeQueries.some(q => this.isTechnicalTopic(q))) {
+        // Ensure knowledgeQueries is an array and filter for strings only
+        const validQueries = Array.isArray(knowledgeQueries) 
+            ? knowledgeQueries.filter(q => q && typeof q === 'string')
+            : [];
+            
+        if (validQueries.some(q => this.isTechnicalTopic(q))) {
             const techPhrases = this.speechPatterns.technicalConfidence;
             const techPhrase = techPhrases[Math.floor(Math.random() * techPhrases.length)];
             
@@ -694,6 +699,10 @@ export class JarvisPersonalitySystem extends EventEmitter {
     }
     
     isTechnicalTopic(query) {
+        // Ensure query is a string before processing
+        if (!query || typeof query !== 'string') {
+            return false;
+        }
         return Array.from(this.knowledgeIntegration.technicalTopics).some(topic => 
             query.toLowerCase().includes(topic)
         );

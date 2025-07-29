@@ -296,33 +296,89 @@ export class JarvisMemorySystem extends EventEmitter {
         const keywords = this.extractKeywords(inputLower);
         const relevantMemories = [];
         
+        console.log(`🔍 Searching ${this.longTermMemory.size} memories for: "${input}"`);
+        console.log(`🔑 Keywords extracted: ${keywords.join(', ')}`);
+        
         for (const [key, memory] of this.longTermMemory) {
             let relevance = 0;
             
-            // Check keyword matches
+            // Parse memory content to search properly
+            let searchableContent = '';
+            try {
+                if (memory.content && typeof memory.content === 'string') {
+                    if (memory.content.startsWith('{')) {
+                        const parsed = JSON.parse(memory.content);
+                        searchableContent = [
+                            parsed.input || '',
+                            parsed.response || '',
+                            parsed.content || '',
+                            parsed.summary || ''
+                        ].join(' ').toLowerCase();
+                    } else {
+                        searchableContent = memory.content.toLowerCase();
+                    }
+                }
+            } catch (e) {
+                searchableContent = (memory.content || '').toLowerCase();
+            }
+            
+            // Enhanced keyword matching
             for (const keyword of keywords) {
-                if (memory.content.toLowerCase().includes(keyword)) {
-                    relevance += 0.2;
+                if (searchableContent.includes(keyword)) {
+                    relevance += 0.3; // Increased weight for keyword matches
                 }
             }
             
-            // Factor in importance and recency
-            relevance += memory.importance * 0.3;
-            const daysSince = (Date.now() - memory.timestamp) / (1000 * 60 * 60 * 24);
-            relevance += Math.max(0, 1 - daysSince / 30) * 0.2;
+            // Check for direct phrase matches (higher relevance)
+            if (searchableContent.includes(inputLower)) {
+                relevance += 0.5;
+            }
             
-            if (relevance > 0.3) {
+            // Factor in importance and recency
+            relevance += memory.importance * 0.4;
+            const daysSince = (Date.now() - memory.timestamp) / (1000 * 60 * 60 * 24);
+            relevance += Math.max(0, 1 - daysSince / 30) * 0.3;
+            
+            // Lower threshold for better recall
+            if (relevance > 0.2) {
                 relevantMemories.push({
                     content: memory.content,
                     relevance: relevance,
-                    timestamp: memory.timestamp
+                    timestamp: memory.timestamp,
+                    type: memory.type,
+                    id: memory.id,
+                    searchableContent: searchableContent.substring(0, 200) // For debugging
                 });
             }
         }
         
-        return relevantMemories
+        const sorted = relevantMemories
             .sort((a, b) => b.relevance - a.relevance)
-            .slice(0, 5);
+            .slice(0, 10); // Increased to 10 for better recall
+            
+        console.log(`📊 Found ${sorted.length} relevant memories`);
+        if (sorted.length > 0) {
+            console.log(`🎯 Top match: ${sorted[0].relevance.toFixed(2)} relevance`);
+        }
+        
+        return sorted;
+    }
+
+    // Add function to get all memories for UI
+    getAllMemories() {
+        console.log('🔍 getAllMemories called, longTermMemory size:', this.longTermMemory.size);
+        const allMemories = [];
+        for (const [key, memory] of this.longTermMemory) {
+            console.log('📋 Memory found:', key, memory.type, memory.timestamp);
+            allMemories.push(memory);
+        }
+        console.log('📊 Returning', allMemories.length, 'memories');
+        return allMemories.sort((a, b) => b.timestamp - a.timestamp);
+    }
+
+    // Add function to get memory count
+    getMemoryCount() {
+        return this.longTermMemory.size;
     }
 
     extractKeywords(text) {
@@ -488,6 +544,51 @@ export class JarvisMemorySystem extends EventEmitter {
             .join('\n');
         
         return `RELEVANT MEMORY CONNECTIONS (${memoryConnections.length} found):\n${formattedMemories}`;
+    }
+
+    // 🧠 NEW: Format recent memories for LLM context  
+    formatRecentMemoriesForContext(recentMemories) {
+        if (!recentMemories || recentMemories.length === 0) return '';
+        
+        const formattedMemories = recentMemories
+            .slice(0, 5) // Top 5 most relevant
+            .map((memory, index) => {
+                const timeAgo = this.formatTimeAgo(memory.timestamp);
+                const relevanceScore = Math.round((memory.relevance || 0) * 100);
+                
+                let memoryContent = '';
+                try {
+                    if (memory.content && typeof memory.content === 'string') {
+                        if (memory.content.startsWith('{')) {
+                            const parsed = JSON.parse(memory.content);
+                            const userInput = parsed.input || '';
+                            const jarvisResponse = parsed.response || '';
+                            
+                            if (userInput && jarvisResponse) {
+                                memoryContent = `User asked: "${userInput.substring(0, 80)}${userInput.length > 80 ? '...' : ''}" | JARVIS replied: "${jarvisResponse.substring(0, 100)}${jarvisResponse.length > 100 ? '...' : ''}"`;
+                            } else if (userInput) {
+                                memoryContent = `User: "${userInput.substring(0, 120)}${userInput.length > 120 ? '...' : ''}"`;
+                            } else {
+                                memoryContent = `Context: "${(parsed.summary || parsed.content || JSON.stringify(parsed)).substring(0, 120)}..."`;
+                            }
+                        } else {
+                            memoryContent = `"${memory.content.substring(0, 120)}${memory.content.length > 120 ? '...' : ''}"`;
+                        }
+                    } else {
+                        memoryContent = `Memory ${index + 1}`;
+                    }
+                } catch (e) {
+                    memoryContent = memory.searchableContent || memory.content || `Memory ${index + 1}`;
+                    if (memoryContent.length > 120) {
+                        memoryContent = memoryContent.substring(0, 120) + '...';
+                    }
+                }
+                
+                return `[${relevanceScore}% match] ${timeAgo}: ${memoryContent}`;
+            })
+            .join('\n');
+        
+        return `RELEVANT MEMORIES (${recentMemories.length} found):\n${formattedMemories}`;
     }
 
     initializeConversationThread() {

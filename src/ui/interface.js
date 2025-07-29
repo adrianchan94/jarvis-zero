@@ -513,10 +513,7 @@ export class JarvisInterface extends EventEmitter {
         
         this.addChatMessage(response.text, 'jarvis');
         
-        // 💡 Display conversation suggestions if available
-        if (response.suggestions && response.suggestions.length > 0) {
-            this.displayConversationSuggestions(response.suggestions);
-        }
+        // Suggestion system removed to preserve tokens for main response quality
         
         // Update emotional visualization
         if (response.emotion) {
@@ -530,126 +527,9 @@ export class JarvisInterface extends EventEmitter {
         }
     }
     
-    displayConversationSuggestions(suggestions) {
-        // Remove existing suggestions
-        const existingSuggestions = document.querySelector('.conversation-suggestions');
-        if (existingSuggestions) {
-            existingSuggestions.remove();
-        }
-        
-        // Create suggestions container
-        const suggestionsContainer = document.createElement('div');
-        suggestionsContainer.className = 'conversation-suggestions';
-        suggestionsContainer.style.cssText = `
-            margin: 15px 0;
-            padding: 16px;
-            background: linear-gradient(135deg, 
-                rgba(0, 212, 255, 0.08), 
-                rgba(64, 224, 208, 0.05)
-            );
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-        `;
-        
-        // Add suggestions title
-        const title = document.createElement('div');
-        title.textContent = '💡 JARVIS Suggestions:';
-        title.style.cssText = `
-            font-family: 'Orbitron', monospace;
-            font-size: 13px;
-            font-weight: 600;
-            color: #00d4ff;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        `;
-        suggestionsContainer.appendChild(title);
-        
-        // Add suggestion buttons
-        suggestions.forEach((suggestion, index) => {
-            const suggestionBtn = document.createElement('button');
-            suggestionBtn.textContent = suggestion;
-            suggestionBtn.className = 'suggestion-btn';
-            suggestionBtn.style.cssText = `
-                display: block;
-                width: 100%;
-                background: linear-gradient(135deg, 
-                    rgba(0, 212, 255, 0.1), 
-                    rgba(0, 150, 255, 0.05)
-                );
-                border: 1px solid rgba(0, 212, 255, 0.3);
-                color: #e8f4fd;
-                padding: 10px 16px;
-                margin: 6px 0;
-                border-radius: 8px;
-                font-family: 'Inter', sans-serif;
-                font-size: 14px;
-                font-weight: 400;
-                text-align: left;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                backdrop-filter: blur(5px);
-            `;
-            
-            // Hover effects
-            suggestionBtn.addEventListener('mouseenter', () => {
-                suggestionBtn.style.background = 'linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 150, 255, 0.1))';
-                suggestionBtn.style.borderColor = '#00d4ff';
-                suggestionBtn.style.transform = 'translateX(4px)';
-                suggestionBtn.style.boxShadow = '0 4px 12px rgba(0, 212, 255, 0.2)';
-            });
-            
-            suggestionBtn.addEventListener('mouseleave', () => {
-                suggestionBtn.style.background = 'linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(0, 150, 255, 0.05))';
-                suggestionBtn.style.borderColor = 'rgba(0, 212, 255, 0.3)';
-                suggestionBtn.style.transform = 'translateX(0)';
-                suggestionBtn.style.boxShadow = 'none';
-            });
-            
-            // Click handler
-            suggestionBtn.addEventListener('click', () => {
-                this.handleSuggestionClick(suggestion);
-            });
-            
-            suggestionsContainer.appendChild(suggestionBtn);
-        });
-        
-        // Add to chat messages
-        this.uiElements.chatMessages.appendChild(suggestionsContainer);
-        
-        // Auto-remove suggestions after 30 seconds
-        setTimeout(() => {
-            if (suggestionsContainer.parentNode) {
-                suggestionsContainer.style.transition = 'all 0.5s ease';
-                suggestionsContainer.style.opacity = '0';
-                suggestionsContainer.style.transform = 'translateY(-10px)';
-                setTimeout(() => {
-                    if (suggestionsContainer.parentNode) {
-                        suggestionsContainer.parentNode.removeChild(suggestionsContainer);
-                    }
-                }, 500);
-            }
-        }, 30000);
-        
-        // Smooth scroll to suggestions
-        setTimeout(() => {
-            suggestionsContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 100);
-    }
+
     
-    handleSuggestionClick(suggestion) {
-        // Fill the input with the suggestion
-        this.uiElements.textInput.value = suggestion;
-        
-        // Focus the input
-        this.uiElements.textInput.focus();
-        
-        // Optionally auto-send the suggestion
-        setTimeout(() => {
-            this.sendTextMessage();
-        }, 500);
-    }
+
     
     addChatMessage(text, sender) {
         const messageDiv = document.createElement('div');
@@ -1714,69 +1594,29 @@ export class JarvisInterface extends EventEmitter {
     }
     
     async loadMemoryData(modal) {
-        // Get memory statistics from IndexedDB (the actual storage location)
-        try {
-            console.log('📊 Loading memory data from IndexedDB...');
+        console.log('📊 Loading memory data from IndexedDB...');
+        
+        // Get memory count from the core system (most reliable)
+        let memoryCount = 0;
+        let memories = [];
+        
+        if (window.jarvis && window.jarvis.core && window.jarvis.core.memorySystem) {
+            memoryCount = window.jarvis.core.memorySystem.getMemoryCount();
+            memories = window.jarvis.core.memorySystem.getAllMemories();
+            console.log('📊 Memory count from core system:', memoryCount);
+            console.log('📊 Memories from core system:', memories.length);
+        }
+        
+        // If core system has memories but we don't, try IndexedDB as fallback
+        if (memoryCount > 0 && memories.length === 0) {
+            console.log('🔄 Core system reports memories but none retrieved, trying IndexedDB fallback...');
             
-            // Get memory count from the core system (most reliable)
-            let memoryCount = 0;
-            let memories = [];
-            
-            if (window.jarvis && window.jarvis.core && window.jarvis.core.memorySystem) {
-                memoryCount = window.jarvis.core.memorySystem.longTermMemory.size;
-                console.log('📊 Memory count from core system:', memoryCount);
-            }
-            
-            // Try to get detailed memory data from IndexedDB (enhanced system)
             try {
                 const db = await this.openIndexedDB();
                 if (db) {
                     // Load from all memory stores
                     const allMemories = [];
-                    
-                    // Load memory blocks
-                    if (db.objectStoreNames.contains('memory_blocks')) {
-                        try {
-                            const transaction1 = db.transaction(['memory_blocks'], 'readonly');
-                            const store1 = transaction1.objectStore('memory_blocks');
-                            const request1 = store1.getAll();
-                            
-                            const blocks = await new Promise((resolve, reject) => {
-                                request1.onsuccess = () => resolve(request1.result || []);
-                                request1.onerror = () => reject(request1.error);
-                            });
-                            
-                            allMemories.push(...blocks.map(block => ({
-                                ...block,
-                                type: 'memory_block',
-                                content: `${block.label}: ${block.value}`
-                            })));
-                        } catch (e) {
-                            console.warn('⚠️ Could not load memory blocks:', e);
-                        }
-                    }
-                    
-                    // Load archival memory
-                    if (db.objectStoreNames.contains('archival_memory')) {
-                        try {
-                            const transaction2 = db.transaction(['archival_memory'], 'readonly');
-                            const store2 = transaction2.objectStore('archival_memory');
-                            const request2 = store2.getAll();
-                            
-                            const archival = await new Promise((resolve, reject) => {
-                                request2.onsuccess = () => resolve(request2.result || []);
-                                request2.onerror = () => reject(request2.error);
-                            });
-                            
-                            allMemories.push(...archival.map(arch => ({
-                                ...arch,
-                                type: 'archival_memory',
-                                content: arch.text_content
-                            })));
-                        } catch (e) {
-                            console.warn('⚠️ Could not load archival memory:', e);
-                        }
-                    }
+                    console.log('🔍 Available object stores:', Array.from(db.objectStoreNames));
                     
                     // Load legacy memories as fallback
                     if (db.objectStoreNames.contains('memories')) {
@@ -1786,13 +1626,22 @@ export class JarvisInterface extends EventEmitter {
                             const request3 = store3.getAll();
                             
                             const legacy = await new Promise((resolve, reject) => {
-                                request3.onsuccess = () => resolve(request3.result || []);
+                                request3.onsuccess = () => {
+                                    const result = request3.result || [];
+                                    console.log('📋 Raw legacy memories data:', result);
+                                    resolve(result);
+                                };
                                 request3.onerror = () => reject(request3.error);
                             });
                             
+                            console.log('💾 Legacy memories found:', legacy.length);
+                            if (legacy.length > 0) {
+                                console.log('📝 Sample memory structure:', legacy[0]);
+                            }
+                            
                             allMemories.push(...legacy.map(mem => ({
                                 ...mem,
-                                type: 'legacy_memory'
+                                type: mem.type || 'legacy_memory'
                             })));
                         } catch (e) {
                             console.warn('⚠️ Could not load legacy memories:', e);
@@ -1800,69 +1649,94 @@ export class JarvisInterface extends EventEmitter {
                     }
                     
                     memories = allMemories;
-                    console.log('📊 Loaded', memories.length, 'memories from enhanced IndexedDB system');
+                    console.log('📊 Total loaded memories from IndexedDB fallback:', memories.length);
                     
-                    // Update count with accurate data
-                    memoryCount = memories.length;
+                    // Update count with IndexedDB data if core system was empty
+                    if (memories.length > 0) {
+                        memoryCount = memories.length;
+                    }
                 }
             } catch (dbError) {
                 console.warn('⚠️ Could not access IndexedDB, using core count:', dbError);
             }
-            
-            // Filter for different types of memories
-            const interactionMemories = memories.filter(mem => 
-                mem.type && (mem.type.includes('interaction') || mem.type.includes('super_intelligent'))
-            );
-            const importantMemories = memories.filter(mem => 
-                mem.importance && mem.importance > 0.7
-            );
-            
-            // Update stats with real data
-            modal.querySelector('#total-memories').textContent = memoryCount;
-            modal.querySelector('#storage-used').textContent = this.formatBytes(JSON.stringify(memories).length);
-            modal.querySelector('#active-thoughts').textContent = interactionMemories.length;
-            modal.querySelector('#important-memories').textContent = importantMemories.length;
-            
-            // Show recent thoughts with improved formatting
-            const recentThoughtsDiv = modal.querySelector('#recent-thoughts');
-            if (memories.length > 0) {
-                // Sort by timestamp and take the most recent 5
-                const recentMemories = memories
-                    .filter(mem => mem.timestamp || mem.input || mem.content)
-                    .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
-                    .slice(0, 5);
-                
-                if (recentMemories.length > 0) {
-                    recentThoughtsDiv.innerHTML = recentMemories.map(memory => {
-                        const timestamp = memory.timestamp ? new Date(memory.timestamp).toLocaleString() : 'Unknown time';
-                        const content = memory.input || memory.content || memory.summary || memory.type || 'Memory entry';
-                        const importance = memory.importance ? (memory.importance * 100).toFixed(0) : '50';
-                        
-                        return `
-                            <div style="margin-bottom: 12px; padding: 10px; background: rgba(0, 212, 255, 0.08); border-left: 4px solid #00d4ff; border-radius: 8px;">
-                                <div style="font-size: 0.85em; opacity: 0.8; color: #00ffff; margin-bottom: 4px;">${timestamp}</div>
-                                <div style="font-size: 0.9em; line-height: 1.4; color: #f0f8ff;">${content.substring(0, 150)}${content.length > 150 ? '...' : ''}</div>
-                                <div style="font-size: 0.75em; opacity: 0.6; margin-top: 4px; color: #00d4ff;">
-                                    Importance: ${importance}% | Type: ${memory.type || 'General'}
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                } else {
-                    recentThoughtsDiv.innerHTML = '<div style="opacity: 0.6; text-align: center; padding: 20px; color: #00d4ff;">Memories are being formed as you interact...</div>';
-                }
-            } else {
-                recentThoughtsDiv.innerHTML = '<div style="opacity: 0.6; text-align: center; padding: 20px; color: #00d4ff;">No persistent memories found. Start a conversation to build memories!</div>';
-            }
-            
-        } catch (error) {
-            console.error('Error loading memory data:', error);
-            modal.querySelector('#total-memories').textContent = '0';
-            modal.querySelector('#storage-used').textContent = '0 bytes';
-            modal.querySelector('#active-thoughts').textContent = '0';
-            modal.querySelector('#important-memories').textContent = '0';
-            modal.querySelector('#recent-thoughts').innerHTML = '<div style="color: #ff4444; text-align: center; padding: 20px;">Error loading memories: ' + error.message + '</div>';
         }
+        
+        // Filter for different types of memories
+        const interactionMemories = memories.filter(mem => 
+            mem.type && (mem.type.includes('interaction') || mem.type.includes('super_intelligent'))
+        );
+        const importantMemories = memories.filter(mem => 
+            mem.importance && mem.importance > 0.7
+        );
+        
+        // Update stats with real data
+        modal.querySelector('#total-memories').textContent = memoryCount;
+        modal.querySelector('#storage-used').textContent = this.formatBytes(JSON.stringify(memories).length);
+        modal.querySelector('#active-thoughts').textContent = interactionMemories.length;
+        modal.querySelector('#important-memories').textContent = importantMemories.length;
+        
+        // Show recent thoughts with improved formatting
+        const recentThoughtsDiv = modal.querySelector('#recent-thoughts');
+        if (memories.length > 0) {
+            // Sort by timestamp and take the most recent 5
+            const recentMemories = memories
+                .filter(mem => mem.timestamp || mem.input || mem.content)
+                .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+                .slice(0, 5);
+            
+            if (recentMemories.length > 0) {
+                recentThoughtsDiv.innerHTML = recentMemories.map(memory => {
+                    const timestamp = memory.timestamp ? new Date(memory.timestamp).toLocaleString() : 'Unknown time';
+                    
+                    // Parse memory content properly
+                    let content = 'Memory entry';
+                    try {
+                        if (memory.content && typeof memory.content === 'string') {
+                            // Try to parse JSON content
+                            if (memory.content.startsWith('{')) {
+                                const parsed = JSON.parse(memory.content);
+                                content = parsed.input || parsed.response || parsed.content || parsed.summary || 'Processed memory';
+                            } else {
+                                content = memory.content;
+                            }
+                        } else if (memory.input) {
+                            content = memory.input;
+                        } else if (memory.summary) {
+                            content = memory.summary;
+                        } else if (memory.type) {
+                            content = `${memory.type} memory`;
+                        }
+                    } catch (e) {
+                        // If parsing fails, use raw content or fallback
+                        content = memory.input || memory.content || memory.summary || memory.type || 'Memory entry';
+                    }
+                    
+                    const importance = memory.importance ? (memory.importance * 100).toFixed(0) : '50';
+                    
+                    return `
+                        <div style="margin-bottom: 12px; padding: 10px; background: rgba(0, 212, 255, 0.08); border-left: 4px solid #00d4ff; border-radius: 8px;">
+                            <div style="font-size: 0.85em; opacity: 0.8; color: #00ffff; margin-bottom: 4px;">${timestamp}</div>
+                            <div style="font-size: 0.9em; line-height: 1.4; color: #f0f8ff;">${content.substring(0, 150)}${content.length > 150 ? '...' : ''}</div>
+                            <div style="font-size: 0.75em; opacity: 0.6; margin-top: 4px; color: #00d4ff;">
+                                Importance: ${importance}% | Type: ${memory.type || 'General'}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                recentThoughtsDiv.innerHTML = '<div style="opacity: 0.6; text-align: center; padding: 20px; color: #00d4ff;">Memories are being formed as you interact...</div>';
+            }
+        } else {
+            recentThoughtsDiv.innerHTML = '<div style="opacity: 0.6; text-align: center; padding: 20px; color: #00d4ff;">No persistent memories found. Start a conversation to build memories!</div>';
+        }
+        
+    } catch (error) {
+        console.error('Error loading memory data:', error);
+        modal.querySelector('#total-memories').textContent = '0';
+        modal.querySelector('#storage-used').textContent = '0 bytes';
+        modal.querySelector('#active-thoughts').textContent = '0';
+        modal.querySelector('#important-memories').textContent = '0';
+        modal.querySelector('#recent-thoughts').innerHTML = '<div style="color: #ff4444; text-align: center; padding: 20px;">Error loading memories: ' + error.message + '</div>';
     }
     
     // Helper function to open IndexedDB
