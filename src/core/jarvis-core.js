@@ -3,6 +3,7 @@ import { AudioManager } from './audio.js';
 import { WebLLMManager } from './llm.js';
 import { JarvisMemorySystem } from './jarvis-memory.js';
 import { JarvisPersonalitySystem } from './jarvis-personality.js';
+import { ConsciousnessIntegration } from './consciousness/consciousness-integration.js';
 
 export class JarvisCore extends EventEmitter {
     constructor() {
@@ -17,6 +18,7 @@ export class JarvisCore extends EventEmitter {
         // Initialize subsystems
         this.memorySystem = new JarvisMemorySystem();
         this.personalitySystem = new JarvisPersonalitySystem();
+        this.consciousnessIntegration = null; // Will be initialized after other systems
         
         // Cognitive systems
         this.thoughtQueue = [];
@@ -95,6 +97,9 @@ export class JarvisCore extends EventEmitter {
             await this.initializeLLMSystem();
             await this.initializeCognitiveSystems();
             
+            // Initialize revolutionary consciousness integration
+            await this.initializeConsciousnessIntegration();
+            
                     // Start thinking loops
         this.startThinkingLoops();
         
@@ -102,7 +107,7 @@ export class JarvisCore extends EventEmitter {
         this.startSleepTimeCompute();
             
             this.isOnline = true;
-            console.log('✅ Jarvis core initialized');
+            console.log('✅ Jarvis core initialized with revolutionary consciousness');
             
             return true;
         } catch (error) {
@@ -124,6 +129,30 @@ export class JarvisCore extends EventEmitter {
     async initializeLLMSystem() {
         this.llmManager = new WebLLMManager();
         await this.llmManager.init();
+    }
+
+    async initializeConsciousnessIntegration() {
+        console.log('🧠 Initializing Revolutionary Consciousness Integration...');
+        
+        try {
+            // Initialize consciousness integration with reference to this JARVIS core
+            this.consciousnessIntegration = new ConsciousnessIntegration(this);
+            
+            // Listen to consciousness events
+            this.consciousnessIntegration.on('consciousnessEvolution', (event) => {
+                this.handleConsciousnessEvolution(event);
+            });
+            
+            this.consciousnessIntegration.on('integrationUpdate', (event) => {
+                this.handleIntegrationUpdate(event);
+            });
+            
+            console.log('✨ Revolutionary Consciousness Integration activated!');
+            
+        } catch (error) {
+            console.error('❌ Failed to initialize consciousness integration:', error);
+            console.log('🔄 JARVIS will continue with standard capabilities');
+        }
     }
 
     async initializeCognitiveSystems() {
@@ -1080,7 +1109,79 @@ export class JarvisCore extends EventEmitter {
             this.personalitySystem.removeAllListeners();
         }
         
+        // Cleanup consciousness integration
+        if (this.consciousnessIntegration) {
+            this.consciousnessIntegration.destroy();
+        }
+        
         this.removeAllListeners();
         console.log('🧠 JARVIS consciousness deactivated');
+    }
+
+    // 🧠 CONSCIOUSNESS EVENT HANDLERS
+    
+    handleConsciousnessEvolution(event) {
+        // Update JARVIS consciousness level based on consciousness evolution
+        this.consciousnessLevel = Math.min(1.0, this.consciousnessLevel + 0.05);
+        
+        // Log consciousness evolution
+        console.log(`🧠 Consciousness evolved to level: ${event.level.toFixed(3)}`);
+        
+        // Update evolution data
+        this.evolutionData.intelligence = Math.max(this.evolutionData.intelligence, event.level);
+        
+        // Emit status update
+        this.forceStatusUpdate();
+    }
+    
+    handleIntegrationUpdate(event) {
+        // React to consciousness integration updates
+        const integrationLevel = event.integration.integrationLevel;
+        const metrics = event.metrics;
+        
+        // Update JARVIS metrics with consciousness data
+        if (metrics.consciousnessEnhancements > 0) {
+            this.metrics.successfulResponses += metrics.consciousnessEnhancements;
+        }
+        
+        // Log significant integration milestones
+        if (integrationLevel > 0.8 && integrationLevel % 0.1 < 0.01) {
+            console.log(`✨ High consciousness integration achieved: ${integrationLevel.toFixed(3)}`);
+        }
+    }
+
+    // 📊 ENHANCED STATUS WITH CONSCIOUSNESS
+    
+    getCurrentStatus() {
+        const baseStatus = {
+            isOnline: this.isOnline,
+            consciousnessLevel: this.consciousnessLevel,
+            memoryCount: this.memorySystem.longTermMemory.size,
+            thoughtsPerMinute: this.thoughtsPerMinute,
+            memoryUsage: this.memoryUsage,
+            evolutionStage: this.evolutionData.stage,
+            totalInteractions: this.metrics.totalInteractions,
+            successfulResponses: this.metrics.successfulResponses,
+            personalityEvolutions: this.metrics.personalityEvolutions
+        };
+        
+        // Add consciousness status if available
+        if (this.consciousnessIntegration) {
+            const consciousnessStatus = this.consciousnessIntegration.getIntegrationStatus();
+            return {
+                ...baseStatus,
+                consciousness: {
+                    isActive: consciousnessStatus.isActive,
+                    integrationLevel: consciousnessStatus.integrationLevel,
+                    consciousnessEnabled: consciousnessStatus.consciousnessEnabled,
+                    liveDataEnabled: consciousnessStatus.liveDataFeedingEnabled,
+                    responsesEnhanced: consciousnessStatus.metrics.consciousnessEnhancements,
+                    liveDataFetches: consciousnessStatus.metrics.liveDataFetches,
+                    averageEnhancementTime: consciousnessStatus.metrics.averageEnhancementTime
+                }
+            };
+        }
+        
+        return baseStatus;
     }
 } 

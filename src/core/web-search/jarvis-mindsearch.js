@@ -8,7 +8,7 @@
  * with access to live, real-time information from the web.
  */
 
-import { EventEmitter } from '../utils/events.js';
+import { EventEmitter } from '../../utils/events.js';
 
 export class JarvisMindSearchIntegration extends EventEmitter {
     constructor() {
@@ -408,19 +408,28 @@ export class JarvisMindSearchIntegration extends EventEmitter {
      */
     async ensureMindSearchServer() {
         try {
-            // First try to check if server is already running
-            const response = await fetch(`${this.mindSearchConfig.serverUrl}/docs`, {
-                method: 'GET',
-                timeout: 3000
+            // Check if server is running by testing the solve endpoint
+            const testPayload = {
+                inputs: "test connection",
+                agent_cfg: {}
+            };
+            
+            const response = await fetch(`${this.mindSearchConfig.serverUrl}/solve`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(testPayload),
+                signal: AbortSignal.timeout(5000)
             });
             
             if (response.ok) {
                 this.mindSearchConfig.isRunning = true;
-                console.log('✅ MindSearch server is already running');
+                console.log('✅ MindSearch server is running and responding');
                 return true;
             }
         } catch (error) {
-            console.log('🚀 MindSearch server not running, will attempt to start it...');
+            console.log('🚀 MindSearch server not responding:', error.message);
         }
         
         // If we get here, the server is not running

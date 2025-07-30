@@ -277,7 +277,7 @@ Remember: You are not just answering - you are having an intelligent conversatio
             
             messagesArray.push(userMessage);
             
-            const modelName = model.model || 'arcee-ai/AFM-4.5B-Preview';
+            const modelName = model.model || 'arcee-ai/AFM-4.5B';
             console.log('🔍 Model object received:', model);
             console.log('🔍 Using model name:', modelName);
             
